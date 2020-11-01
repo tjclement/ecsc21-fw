@@ -35,6 +35,7 @@
 #include "py/mperrno.h"
 #include "py/mphal.h"
 #include "py/runtime.h"
+#include "py/objstr.h"
 #include "rom/rtc.h"
 
 #include <esp_heap_caps.h>
@@ -178,16 +179,43 @@ STATIC size_t wl_sect_size = 4096;
 
 STATIC esp_partition_t fs_part;
 
-STATIC mp_obj_t esp_flash_read(mp_obj_t offset_in, mp_obj_t buf_in) {
-    mp_int_t offset = mp_obj_get_int(offset_in);
-    mp_buffer_info_t bufinfo;
-    mp_get_buffer_raise(buf_in, &bufinfo, MP_BUFFER_WRITE);
 
-    esp_err_t res = wl_read(fs_handle, offset, bufinfo.buf, bufinfo.len);
-    if (res != ESP_OK) {
-        mp_raise_OSError(MP_EIO);
-    }
-    return mp_const_none;
+STATIC mp_obj_t esp_flash_raw_read(mp_obj_t offset_in, mp_obj_t buf_in) {
+  mp_int_t offset = mp_obj_get_int(offset_in);
+  mp_buffer_info_t bufinfo;
+  mp_get_buffer_raise(buf_in, &bufinfo, MP_BUFFER_WRITE);
+
+  esp_err_t res = spi_flash_read(offset, bufinfo.buf, bufinfo.len);
+  if (res != ESP_OK) {
+    mp_raise_OSError(MP_EIO);
+  }
+  return mp_const_true;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(esp_flash_raw_read_obj, esp_flash_raw_read);
+
+STATIC mp_obj_t esp_flash_raw_write(mp_obj_t offset_in, mp_obj_t buf_in) {
+  mp_int_t offset = mp_obj_get_int(offset_in);
+  mp_buffer_info_t bufinfo;
+  mp_get_buffer_raise(buf_in, &bufinfo, MP_BUFFER_READ);
+
+  esp_err_t res = spi_flash_write(offset, bufinfo.buf, bufinfo.len);
+  if (res != ESP_OK) {
+    mp_raise_OSError(MP_EIO);
+  }
+  return mp_const_true;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(esp_flash_raw_write_obj, esp_flash_raw_write);
+
+STATIC mp_obj_t esp_flash_read(mp_obj_t offset_in, mp_obj_t buf_in) {
+mp_int_t offset = mp_obj_get_int(offset_in);
+mp_buffer_info_t bufinfo;
+mp_get_buffer_raise(buf_in, &bufinfo, MP_BUFFER_WRITE);
+
+esp_err_t res = wl_read(fs_handle, offset, bufinfo.buf, bufinfo.len);
+if (res != ESP_OK) {
+mp_raise_OSError(MP_EIO);
+}
+return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(esp_flash_read_obj, esp_flash_read);
 
@@ -215,22 +243,39 @@ STATIC mp_obj_t esp_flash_erase(mp_obj_t sector_in) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(esp_flash_erase_obj, esp_flash_erase);
 
+STATIC mp_obj_t esp_flash_choose(mp_obj_t partitiontype_in, mp_obj_t subtype_in, mp_obj_t name_in) {
+  mp_int_t partitiontype = mp_obj_get_int(partitiontype_in);
+  mp_int_t subtype = mp_obj_get_int(subtype_in);
+  GET_STR_DATA_LEN(name_in, name, name_len);
+
+  printf("Selecting %d %d %s\n", partitiontype, subtype, (char*)name);
+  const esp_partition_t *part
+      = esp_partition_find_first(partitiontype, subtype, (char*) name);
+  if (part == NULL) {
+    printf("No part\n");
+    return mp_const_false;
+  }
+  memcpy(&fs_part, part, sizeof(esp_partition_t));
+  return mp_const_true;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_3(esp_flash_choose_obj, esp_flash_choose);
+
 STATIC mp_obj_t esp_flash_size(void) {
   if (fs_handle == WL_INVALID_HANDLE) {
-      const esp_partition_t *part
-          = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, ESP_PARTITION_SUBTYPE_ANY, "locfd");
-      if (part == NULL) {
-        printf("No part\n");
-          return mp_obj_new_int_from_uint(0);
-      }
-      memcpy(&fs_part, part, sizeof(esp_partition_t));
+    const esp_partition_t *part
+        = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, ESP_PARTITION_SUBTYPE_ANY, "locfd");
+    if (part == NULL) {
+      printf("No part\n");
+      return mp_obj_new_int_from_uint(0);
+    }
+    memcpy(&fs_part, part, sizeof(esp_partition_t));
 
-      esp_err_t res = wl_mount(&fs_part, &fs_handle);
-      if (res != ESP_OK) {
-        printf("No mount\n");
-          return mp_obj_new_int_from_uint(0);
-      }
-      wl_sect_size = wl_sector_size(fs_handle);
+    esp_err_t res = wl_mount(&fs_part, &fs_handle);
+    if (res != ESP_OK) {
+      printf("No mount\n");
+      return mp_obj_new_int_from_uint(0);
+    }
+    wl_sect_size = wl_sector_size(fs_handle);
   }
   return mp_obj_new_int_from_uint(fs_part.size);
 }
@@ -522,14 +567,17 @@ STATIC const mp_rom_map_elem_t esp_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_wdt_stop), MP_ROM_PTR(&esp_wdt_stop_obj) },
     { MP_ROM_QSTR(MP_QSTR_wdt_reset), MP_ROM_PTR(&esp_wdt_reset_obj) },
 
-    /*{ MP_ROM_QSTR(MP_QSTR_flash_read), MP_ROM_PTR(&esp_flash_read_obj) },
+    { MP_ROM_QSTR(MP_QSTR_flash_raw_read), MP_ROM_PTR(&esp_flash_raw_read_obj) },
+    { MP_ROM_QSTR(MP_QSTR_flash_raw_write), MP_ROM_PTR(&esp_flash_raw_write_obj) },
+    { MP_ROM_QSTR(MP_QSTR_flash_read), MP_ROM_PTR(&esp_flash_read_obj) },
     { MP_ROM_QSTR(MP_QSTR_flash_write), MP_ROM_PTR(&esp_flash_write_obj) },
     { MP_ROM_QSTR(MP_QSTR_flash_erase), MP_ROM_PTR(&esp_flash_erase_obj) },
     { MP_ROM_QSTR(MP_QSTR_flash_size), MP_ROM_PTR(&esp_flash_size_obj) },
+    { MP_ROM_QSTR(MP_QSTR_flash_choose), MP_ROM_PTR(&esp_flash_choose_obj) },
     { MP_ROM_QSTR(MP_QSTR_flash_user_start), MP_ROM_PTR(&esp_flash_user_start_obj) },
-    { MP_ROM_QSTR(MP_QSTR_flash_sec_size), MP_ROM_PTR(&esp_flash_sec_size_obj) },*/
+    { MP_ROM_QSTR(MP_QSTR_flash_sec_size), MP_ROM_PTR(&esp_flash_sec_size_obj) },
 
-	{ MP_ROM_QSTR(MP_QSTR_dump_mem_allocs), MP_ROM_PTR(&dump_mem_allocs_obj) },
+    { MP_ROM_QSTR(MP_QSTR_dump_mem_allocs), MP_ROM_PTR(&dump_mem_allocs_obj) },
 
     {MP_ROM_QSTR(MP_QSTR_rtc_get_reset_reason),
      MP_ROM_PTR(&esp_rtc_get_reset_reason_obj)},

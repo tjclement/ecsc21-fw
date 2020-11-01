@@ -7,47 +7,43 @@ rtc.write(1,0)
 
 device.prepareForWakeup()
 
+import orientation, display
+# Set display backlight
+display.drawFill(0x0)
+display.flush()
+pin=machine.PWM(2, freq=20000, duty=100)
+orientation.default()
+del orientation, display
+
 __chk_recovery = False
 fc_level = machine.nvs_getint("system", 'factory_checked') or 0
-recovery_button = None
-
-if fc_level >= 3:
-	try:
-		import buttons
-		try:
-			#Use the START button if available
-			recovery_button = buttons.BTN_START
-		except:
-			#Else use the B button
-			recovery_button = buttons.BTN_B
-		__chk_recovery = machine.wake_reason() == (7, 0) and buttons.value(recovery_button)
-	except:
-		pass
 
 #Application starting
-if __chk_recovery:
-	app = "dashboard.recovery"
-else:
-	app = rtc.read_string()
-	if not app:
-		if fc_level < 3:
-			app = "factory_checks"
-		else:
-			app = machine.nvs_getstr("system", 'default_app')
-			if not app:
-				app = 'dashboard.home'
-        del fc_level
+app = rtc.read_string()
+if not app:
+	if fc_level < 4:
+		app = "factory_checks"
+	else:
+		app = machine.nvs_getstr("system", 'default_app')
+		if not app:
+			app = 'dashboard.home'
+	del fc_level
 
-del __chk_recovery
 del rtc
-del recovery_button
 
 if app and not app == "shell":
 	try:
 		print("Starting app '%s'..." % app)
 		system.__current_app__ = app
 		if app:
-			__import__(app)
+			module = __import__(app)
+			parts = app.split('.')
+			for submodule in parts[1:]:
+				module = getattr(module, submodule)
+			# Expose the started module's properties as globals, so
+			# users can approach them via the python console
+			for name in dir(module):
+				globals()[name] = getattr(module, name)
 	except KeyboardInterrupt:
 		system.launcher()
 	except BaseException as e:

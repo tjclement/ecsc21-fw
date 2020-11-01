@@ -1,2 +1,3 @@
 #!/bin/bash
-python2 esp-idf/components/esptool_py/esptool/esptool.py --port /dev/ttyUSB0 erase_flash
+export PATH="$PATH:$(pwd)/xtensa-esp32-elf/bin"
+python3 esp-idf/components/esptool_py/esptool/esptool.py --port $(bash -c 'ls /dev/tty{USB*,.wchusbserial*,.usbserial-*,.usbmodem*,.SLAB_USBtoUART,ACM*} 2>/dev/null') erase_flash

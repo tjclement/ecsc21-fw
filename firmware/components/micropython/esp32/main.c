@@ -74,7 +74,7 @@ extern bool s_spiram_okay;
 static StaticTask_t DRAM_ATTR mp_task_tcb;
 static StackType_t *mp_task_stack;
 static StackType_t *mp_task_stack_end;
-static int mp_task_stack_len = 4096;
+static int mp_task_stack_len = 8192;
 static uint8_t *mp_task_heap = NULL;
 
 int MainTaskCore = 0;

@@ -112,16 +112,19 @@ def menu(title, items, selected = 0, text="", width=32):
 			time.sleep(2)
 			junk = machine.stdin_get(10000, 10) #Read all remaining characters and throw them away
 
-def prompt(prompt, x, y, buff = ""):
+def prompt(prompt, x=None, y=None, buff = "", colors=True):
 	running = True
 	while running:
-		goto(x, y)
+		if x is not None and y is not None:
+			goto(x, y)
 		sys.stdout.write(prompt+": ")
-		color(30, 47, 0)
+		if colors:
+			color(30, 47, 0)
 		sys.stdout.write(buff)
 		if len(buff) < 64:
 			sys.stdout.write(" "*(64-len(buff)))
-		color()
+		if colors:
+			color()
 		last = sys.stdin.read(1)
 		if last == '\n' or last == '\r':
 			return buff

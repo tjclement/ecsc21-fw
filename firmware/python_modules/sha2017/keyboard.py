@@ -269,7 +269,7 @@ def show(newTitle, initialText, cbAccept, cbCancel=None):
 	_cbAccept = cbAccept
 	_cbCancel = cbCancel
 	cursorPos = len(text)
-	buttons.pushMapping();
+	buttons.pushMapping()
 	buttons.attach(buttons.BTN_A, onA)
 	buttons.attach(buttons.BTN_B, onB)
 	buttons.attach(buttons.BTN_SELECT, onSelect)

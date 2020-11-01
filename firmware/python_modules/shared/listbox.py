@@ -1,18 +1,19 @@
 import display, gc
 
-_activeList = None
+_activeList = {}
 
 # Listbox UI element
 class List():
-	def __init__(self, x, y, w, h):
+	def __init__(self, x, y, w, h, font="roboto_regular12"):
 		self.x = x
 		self.y = y
 		self.w = w
 		self.h = h
+		self.font = font
 		self.items = []
 		self.selected = 0
 		global _activeList
-		_activeList = self
+		_activeList[self] = True
 		self.lines = self.h // (display.getTextHeight(" ", "roboto_regular12")+6)
 		self.offset = 0
 		self.visible(True)
@@ -83,8 +84,8 @@ class List():
 		global _activeList
 		self.items = []
 		self.selected = 0
-		_activeList = None
-		
+		del _activeList[self]
+
 	def moveUp(self):
 		if self.selected > 0:
 			self.selected-=1
@@ -92,7 +93,7 @@ class List():
 				self.offset = self.selected
 		else:
 			self.selected = len(self.items)-1
-			self.offset = self.selected - self.lines + 1
+			self.offset = max(0, self.selected - self.lines + 1)
 		self.draw()
 			
 	def moveDown(self):
@@ -110,7 +111,7 @@ class List():
 		self.draw()
 
 	def enabled(self, val):
-		global _activeList, _listUpCallback, _listDownCallback
+		global _listUpCallback, _listDownCallback
 		self._enabled = val
 	
 	def clear(self):
