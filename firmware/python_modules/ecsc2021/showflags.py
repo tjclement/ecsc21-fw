@@ -1,4 +1,4 @@
-import listbox, valuestore, display, virtualtimers
+import listbox, valuestore, display, virtualtimers, machine
 
 
 def run():
@@ -10,13 +10,14 @@ def run():
         '1d': 'Timing is Key',
         '1e': 'Sailing in Side Channels',
         '1f': 'One Time Pwn',
+        '2a': 'Zagan\'s IP',
+        '2b': 'Zagan\'s Bitcoin Wallet',
+        '2c': 'Zagan\'s Location',
     }
 
     found_flags = valuestore.load(keyname='flags')
     items = []
     total_points = 0
-
-    # print('flags', found_flags)
 
     for key in found_flags.keys():
         # print('Doing', key)
@@ -32,12 +33,19 @@ def run():
     if len(items) == 0:
         items = ['You have not found any flags so far.']
 
-    list = listbox.List(0, 0, 240, 320)
+    if total_points == 1700:
+        items.append(' ')
+        items.append('Well done, you\'ve captured all flags!')
+
+    list = listbox.List(0, 0, 240, 320, header='Current points: %d' % total_points)
     for item in items:
         list.add_item(item)
 
     display.flush()
+    print('Flags found so far:', found_flags)
+
     return -1
 
-virtualtimers.begin(500)
-virtualtimers.new(500, run)
+run()
+# virtualtimers.begin(500)
+# virtualtimers.new(500, run)

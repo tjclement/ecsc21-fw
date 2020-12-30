@@ -78,16 +78,25 @@ def submit_flag(flag):
     print('Successfully submitted your flag!')
 
     import machine
-    if not machine.nvs_getint('system', 'jobs_unlocked'):
-        total_points = 0
-        for flag_object in flag_dict.values():
-            try:
-                chall, pts = parse_flag(flag_object['flag'])
-                total_points += pts
-            except:
-                pass
+    total_points = 0
+    for flag_object in flag_dict.values():
+        try:
+            chall, pts = parse_flag(flag_object['flag'])
+            total_points += pts
+        except:
+            pass
 
+    if not machine.nvs_getint('system', 'jobs_unlocked'):
         if total_points >= 700:
             import system
             system.start('unlock_jobs')
+
+    if not machine.nvs_getint('system', 'ctf_done'):
+        if total_points == 1700:
+            machine.nvs_setint('system', 'ctf_done', 1)
+            import easydraw, time, system
+            time.sleep(1)
+            easydraw.messageCentered('Congratulations!\n\n\n\n\nYou have finished all challenges!')
+            time.sleep(3)
+            system.home()
     del valuestore

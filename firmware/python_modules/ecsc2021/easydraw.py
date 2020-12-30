@@ -181,3 +181,17 @@ def lineSplit(message, width=None, font=version.font_default):
 	if len(line) > 0:
 		lines.append(line)
 	return lines
+
+
+def text(x, y, content, width=None, font="Roboto_Regular12", colour=0xFFFFFF, flush=False):
+	lines = content.split('\n')
+	lineHeight = display.getTextHeight(" ", font)
+	width = width if width is not None else (display.width() - x)
+	for line in lines:
+		split_lines = lineSplit(line, width=width, font=font) if line != "" else [""]
+		for split_line in split_lines:
+			display.drawText(x, y, split_line, colour, font)
+			y += lineHeight
+
+	if flush:
+		display.flush(display.FLAG_LUT_FASTEST)

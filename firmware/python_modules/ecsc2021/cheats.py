@@ -12,6 +12,9 @@ def run():
         '1d': {'name': 'Timing is Key', 'points': 200},
         '1e': {'name': 'Sailing in Side Channels', 'points': 200},
         '1f': {'name': 'One Time Pwn', 'points': 200},
+        '2a': {'name': 'Zagan\'s IP', 'points': 100},
+        '2b': {'name': 'Zagan\'s Bitcoin Wallet', 'points': 200},
+        '2c': {'name': 'Zagan\'s Address', 'points': 500},
     }
 
     found_flags = valuestore.load(keyname='flags')
@@ -28,8 +31,8 @@ def run():
     def _on_up(pressed):
         if not pressed:
             return
-    list.moveUp()
-    display.flush()
+        list.moveUp()
+        display.flush()
 
     def _on_down(pressed):
         if not pressed:
@@ -52,5 +55,8 @@ def run():
     buttons.assign(buttons.BTN_UP, _on_up)
     buttons.assign(buttons.BTN_DOWN, _on_down)
     buttons.assign(buttons.BTN_RIGHT, _on_right)
+
+    list.draw()
+    display.flush()
 
 run()

@@ -23,6 +23,9 @@ app = rtc.read_string()
 if not app:
 	if fc_level < 4:
 		app = "factory_checks"
+	elif not machine.nvs_getint('system', 'splash_shown'):
+		machine.nvs_setint('system', 'splash_shown', 1)
+		app = 'bootsplash'
 	else:
 		app = machine.nvs_getstr("system", 'default_app')
 		if not app:
@@ -33,7 +36,7 @@ del rtc
 
 if app and not app == "shell":
 	try:
-		print("Starting app '%s'..." % app)
+		# print("Starting app '%s'..." % app)
 		system.__current_app__ = app
 		if app:
 			module = __import__(app)
