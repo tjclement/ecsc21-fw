@@ -28,12 +28,12 @@ _menu_items = {
         ('(debug) Factory reset', lambda: system.start('reset')),
     ],
     _challenge_menu: [
-        ('Script Kiddie', lambda: system.start('challenges.1a')),
-        ('King of Regex', lambda: system.start('challenges.1b')),
-        ('Security through Obscurity', lambda: system.start('challenges.1c')),
-        ('Timing is Key', lambda: system.start('challenges.1d')),
-        ('Sailing in Side Channels', lambda: system.start('challenges.1e')),
-        ('One Time Pwn', lambda: system.start('challenges.1f')),
+        ('Script Kiddie (100 pts)', lambda: system.start('challenges.1a')),
+        ('King of Regex (100 pts)', lambda: system.start('challenges.1b')),
+        ('Security through Obscurity (100 pts)', lambda: system.start('challenges.1c')),
+        ('Timing is Key (200 pts)', lambda: system.start('challenges.1d')),
+        ('Sailing in Side Channels (200 pts)', lambda: system.start('challenges.1e')),
+        ('One Time Pwn (200 pts)', lambda: system.start('challenges.1f')),
     ],
     _jobs_menu: [],
     _messages_menu: [],
@@ -198,14 +198,3 @@ buttons.pushMapping({
 _build_menu()
 _menu_stack[-1].draw()
 display.flush()
-
-import time
-from ir import NecIR
-infra = NecIR(badge='ecsc2021', freq=40000)
-infra.command = lambda addr, cmd: print('Got', addr, cmd)
-infra.rx_enable()
-while True:
-    infra.tx(0x13, 0x37)
-    print(infra.buffer)
-    time.sleep(2)
-    # time.sleep(0.5)

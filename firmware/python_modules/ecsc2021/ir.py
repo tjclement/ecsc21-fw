@@ -52,7 +52,7 @@ class BadgeIr():
     def decoder(self):
         return 1
     def real_decoder(self,timer):
-        print("Real decoder called.")
+        # print("Real decoder called.")
         self.rxtimer.deinit()
         self.rxtimer = None
         if self.decoder():
@@ -78,13 +78,14 @@ class BadgeIr():
                 if self.bufpos == len(self.buffer):
                     return 1
     def callback(self,pin):
-        print("Callback.")
+        # print("Callback.")
         irqs = machine.disable_irq()
         hasdata = self.mr()
         machine.enable_irq(irqs)
         if hasdata and not self.rxtimer:
-            self.rxtimer = machine.Timer(1)
+            self.rxtimer = machine.Timer(2)
             self.rxtimer.init(mode=machine.Timer.ONE_SHOT, period=1,callback=self.real_decoder)
+
     def rx_enable(self):
         if self.rxenablepin >= 0:
             self.pin_rx_enable = machine.Pin(self.rxenablepin, machine.Pin.OUT)
@@ -112,6 +113,8 @@ class BadgeIr():
     def txByte(self,byte):
         for bit in range(8):
             self.txBit( ( byte >> ( 7 - bit ) ) & 1 ) # MSB
+
+
 class NecIR(BadgeIr):
     # Implements NEC Infrared
     # Example:
@@ -186,6 +189,82 @@ class NecIR(BadgeIr):
                     return(0)
         self.cleanbuffer(i)
         return(0)
+
+class CustomIR(BadgeIr):
+    # Implements custom Infrared protocol for 4-byte transfers using NEC timing
+    # Example:
+    #    IR=CustomIR()
+    #    CustomIR.command= <function (data1, data2, data3, data4)>
+    #    CustomIR.repeat=  <function ()>
+    #    CustomIR.rx_enable()
+    #  To stop receiving:
+    #    CustomIR.rx_disable()
+    #  To send:
+    #    CustomIR.tx(<byte data1>,<byte data2>,<byte data3>,<byte data4>)
+    #    CustomIR.tx_repeat()
+    command = None
+    repeat = None
+    bitform = { 0: [[1,562],[0,562]], 1: [[1,562],[0,1687]], 's': [[1,9000],[0,4500]], 'e': [[1,562],[0,100]], 'r': [[1,9000],[0,2500],[1,562],[0,100]] }
+
+    def tx(self,data1,data2,data3,data4):
+        self.tx_enable()
+        self.txBit('s')
+        self.txByte(data1)
+        self.txByte(data2)
+        self.txByte(data3)
+        self.txByte(data4)
+        self.txBit('e')
+        self.tx_disable()
+
+    def tx_repeat(self):
+        self.txBit('r')
+
+    def decoder(self):
+        decoded=0
+        i=0
+        while True and self.bufpos-i>0:
+            (val,time)=self.buffer[i]
+            i+=1
+            if val==0 and time==9:
+                if self.bufpos<66: return(0) # Not yet complete....
+                p1=None
+                p2=None
+                bits=0
+                while True and self.bufpos-i>0:
+                    (val,time)=self.buffer[i]
+                    i+=1
+                    if time>0:
+                        if p1==None:
+                            p1=(val,time)
+                            if bits==32 and p1[1]==1:
+                                self.cleanbuffer(i)
+                                self.command(decoded >> 24 & 0xFF, decoded >> 16 & 0xFF,
+                                             decoded >> 8 & 0xFF, decoded & 0xFF)
+                                return(0)
+                        else:
+                            p2=(val,time)
+                            if p1[1]==1 and p2[1]==3:
+                                decoded=decoded<<1 | 1
+                                bits+=1
+                            elif p1[1]==1 and p2[1]==1:
+                                decoded=decoded<<1
+                                bits+=1
+                            if bits==32 and p2==None:
+                                self.cleanbuffer(i)
+                                return(0)
+                            p1=None
+                            p2=None
+                    elif time<0:
+                        self.cleanbuffer(i)
+                        return(0)
+            elif val==1 and time==18:
+                if self.buffer[i] == [0,4] and self.buffer[i+1] == [1,1]:
+                    i+=2
+                    if self.repeat: self.repeat()
+                    return(0)
+        self.cleanbuffer(i)
+        return(0)
+
 
 class SamsungIR(BadgeIr):
     # Implements Samsung Infrared
@@ -279,56 +358,56 @@ class NokiaIR(BadgeIr):
         self.tx_enable()
         self.txBit('s')
         for mask in range(0,8):
-            self.txBit((command >> (bits-mask)) & 1)
+            self.txBit((command >> (mask)) & 1)
         for mask in range(0,4):
-            self.txBit((address >> (bits-mask)) & 1)
+            self.txBit((address >> (mask)) & 1)
         for mask in range(0,4):
-            self.txBit((subcode >> (bits-mask)) & 1)
+            self.txBit((subcode >> (mask)) & 1)
         self.txBit('e')
         self.tx_disable()
 
-        def decoder(self):
-            decoded=0
-            i=0
-            while True and self.bufpos-i>0:
-                (val,time)=self.buffer[i]
-                i+=1
-                if val==0 and time==9:
-                    if self.bufpos<66: return(0) # Not yet complete....
-                    p1=None
-                    p2=None
-                    bits=0
-                    while True and self.bufpos-i>0:
-                        (val,time)=self.buffer[i]
-                        i+=1
-                        if time>0:
-                            if p1==None:
-                                p1=(val,time)
-                                if bits==32 and p1[1]==1:
-                                    self.cleanbuffer(i)
-                                    if (decoded >> 24 & 0xFF) == (0xFF ^ (decoded >> 16 & 0xFF)) and (decoded >> 8 & 0xFF) == (0xFF ^ (decoded >> 0 & 0xFF)) and self.command:
-                                        self.command(decoded >> 24 & 0xFF,decoded >> 8 & 0xFF)
-                                    return(0)
-                            else:
-                                p2=(val,time)
-                                if p1[1]==1 and p2[1]==3:
-                                    decoded=decoded<<1 | 1
-                                    bits+=1
-                                elif p1[1]==1 and p2[1]==1:
-                                    decoded=decoded<<1
-                                    bits+=1
-                                if bits==32 and p2==None:
-                                    self.cleanbuffer(i)
-                                    return(0)
-                                p1=None
-                                p2=None
-                        elif time<0:
-                            self.cleanbuffer(i)
-                            return(0)
-                elif val==1 and time==18:
-                    if self.buffer[i] == [0,4] and self.buffer[i+1] == [1,1]:
-                        i+=2
-                        if self.repeat: self.repeat()
+    def decoder(self):
+        decoded=0
+        i=0
+        while True and self.bufpos-i>0:
+            (val,time)=self.buffer[i]
+            i+=1
+            if val==0 and time==9:
+                if self.bufpos<66: return(0) # Not yet complete....
+                p1=None
+                p2=None
+                bits=0
+                while True and self.bufpos-i>0:
+                    (val,time)=self.buffer[i]
+                    i+=1
+                    if time>0:
+                        if p1==None:
+                            p1=(val,time)
+                            if bits==32 and p1[1]==1:
+                                self.cleanbuffer(i)
+                                if (decoded >> 24 & 0xFF) == (0xFF ^ (decoded >> 16 & 0xFF)) and (decoded >> 8 & 0xFF) == (0xFF ^ (decoded >> 0 & 0xFF)) and self.command:
+                                    self.command(decoded >> 24 & 0xFF,decoded >> 8 & 0xFF)
+                                return(0)
+                        else:
+                            p2=(val,time)
+                            if p1[1]==1 and p2[1]==3:
+                                decoded=decoded<<1 | 1
+                                bits+=1
+                            elif p1[1]==1 and p2[1]==1:
+                                decoded=decoded<<1
+                                bits+=1
+                            if bits==32 and p2==None:
+                                self.cleanbuffer(i)
+                                return(0)
+                            p1=None
+                            p2=None
+                    elif time<0:
+                        self.cleanbuffer(i)
                         return(0)
-            self.cleanbuffer(i)
-            return(0)
+            elif val==1 and time==18:
+                if self.buffer[i] == [0,4] and self.buffer[i+1] == [1,1]:
+                    i+=2
+                    if self.repeat: self.repeat()
+                    return(0)
+        self.cleanbuffer(i)
+        return(0)

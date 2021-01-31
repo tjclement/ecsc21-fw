@@ -1,6 +1,11 @@
+import struct
+
 import machine, shamirs, easydraw, display, time
+from ir import SamsungIR, NokiaIR, NecIR, CustomIR
+import virtualtimers
 
 prime = 44770738984673597735176638240122602127
+
 
 def authenticate(number):
     try:
@@ -29,9 +34,55 @@ def authenticate(number):
     else:
         print('You don\'t have the right secret.')
 
+
 key = machine.nvs_getstr('system', 'emergency_key')
+key_no, key_data = key.split(' - ')
+key_no = int(key_no[1:])
 message = 'In matters of extreme importance, 3 members of the Sixth Circle can together unlock emergency contact details of Zagan.\n\nUse this only as a last resort. Each of you has a key shown in the terminal, and 3 keys together form a Shamir\'s shared secret.\n\nIn the terminal you will find the "shamirs" python module available to you. Once you have obtained the secret (a number), call authenticate(<secret>).'
-easydraw.messageCentered('Emergency Contact\n\n\n' + message + '\n\nYou have key %s' % key.split(' ')[0])
+easydraw.messageCentered('Emergency Contact\n\n\n' + message + '\n\nYou have key %s' % key_no)
 print(message)
 print('\nYour emergency key is: ' + key)
 print('\nThe common prime modulus is: ' + str(prime))
+
+keys = []
+for i in range(3):
+    if key_no == i:
+        keys.append([char for char in str(key_data)])
+    else:
+        keys.append(['\0'] * len(key_data))
+
+current_key_index = -1
+
+
+def ir_receive(key_index, offset, char1, char2):
+    global keys
+    print('receiving')
+    if not 0 < key_index < len(keys):
+        print('Got wrong key index')
+        return
+    if not 0 < offset < len(key_data):
+        print('Got wrong offset')
+        return
+    keys[current_key_index][offset] = chr(char1)
+    keys[current_key_index][offset+1] = chr(char2)
+
+
+def send_own_key():
+    global infra
+    print('starting sending')
+    infra.rx_disable()
+    for i in range(0, len(key_data), 2):
+        char1 = ord(key_data[i])
+        char2 = ord(key_data[i+1])
+        infra.tx(key_no, i, char1, char2)
+    infra.rx_enable()
+    print('stopping sending')
+    return 5000
+
+
+infra = CustomIR(badge='ecsc2021', freq=40000)
+infra.command = ir_receive
+infra.rx_enable()
+
+virtualtimers.begin(5000)
+virtualtimers.new(5000, send_own_key)

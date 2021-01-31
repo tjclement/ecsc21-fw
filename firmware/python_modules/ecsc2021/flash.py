@@ -1,6 +1,9 @@
 
 
 def read(address, length):
+    if length < 16:
+        print('Please read >= 16 bytes at once')
+        return None
     import esp, gc
     gc.collect()  # to explicitly clean up any previously made buffers, so we don't starve memory
     buffer = bytearray(length)
