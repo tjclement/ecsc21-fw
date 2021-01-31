@@ -1,8 +1,6 @@
-import struct
-
-import machine, shamirs, easydraw, display, time
-from ir import SamsungIR, NokiaIR, NecIR, CustomIR
-import virtualtimers
+import machine, shamirs, easydraw, display, time, virtualtimers, buttons
+from ir import CustomIR
+import crc8 as crc
 
 prime = 44770738984673597735176638240122602127
 
@@ -35,54 +33,114 @@ def authenticate(number):
         print('You don\'t have the right secret.')
 
 
-key = machine.nvs_getstr('system', 'emergency_key')
-key_no, key_data = key.split(' - ')
+key_str = machine.nvs_getstr('system', 'emergency_key')
+key_no, key_data = key_str.split(' - ')
 key_no = int(key_no[1:])
-message = 'In matters of extreme importance, 3 members of the Sixth Circle can together unlock emergency contact details of Zagan.\n\nUse this only as a last resort. Each of you has a key shown in the terminal, and 3 keys together form a Shamir\'s shared secret.\n\nIn the terminal you will find the "shamirs" python module available to you. Once you have obtained the secret (a number), call authenticate(<secret>).'
-easydraw.messageCentered('Emergency Contact\n\n\n' + message + '\n\nYou have key %s' % key_no)
+key_data = int(key_data)
+message = 'In matters of extreme importance, 3 members of the Sixth Circle can together unlock emergency contact details of Zagan.\n\n' \
+          'Use this only as a last resort. Each of you has a key, and 3 keys together form a Shamir\'s shared secret.\n\n' \
+          'Send your key by holding the IR reader on the back of your handheld near another, and pressing the up key.\n\n' \
+          'In the terminal you will find the "shamirs" python module available to you. Once you have obtained the secret (a number), call authenticate(<secret>).'
+
 print(message)
-print('\nYour emergency key is: ' + key)
-print('\nThe common prime modulus is: ' + str(prime))
 
 keys = []
 for i in range(3):
     if key_no == i:
-        keys.append([char for char in str(key_data)])
+        keys.append(key_data)
     else:
-        keys.append(['\0'] * len(key_data))
+        saved = machine.nvs_getstr('system', 'received_key%d' % i)
+        keys.append(int(saved) if saved else 0)
 
 current_key_index = -1
 
 
+def draw_normal():
+    available_indices = [str(i) for i in range(len(keys)) if keys[i] != 0]
+    word = 'key' if len(available_indices) < 2 else 'keys'
+    display.drawFill(0x0)
+    easydraw.messageCentered('Emergency Contact\n\n\n' + message + '\n\nYou have %s %s' % (word, ', '.join(available_indices)))
+    display.flush()
+    print('Your saved emergency keys are: ')
+    [print('#%s - %s' % (i, str(keys[int(i)]))) for i in available_indices]
+    print('\nThe common prime modulus is: ' + str(prime))
+
+
+def draw_receive(key_index, ratio):
+    display.drawFill(0x0)
+    easydraw.messageCentered('Receiving\n\n\n' + 'Key %d: %.2f%%' % (key_index, ratio*100))
+    display.flush()
+
+
+def draw_send(key_index):
+    display.drawFill(0x0)
+    easydraw.messageCentered('Sending\n\n\n' + 'Key %d' % key_index)
+    display.flush()
+
+
+def key_to_bytes(key: int):
+    return bytearray([((key >> (120-shift)) & 0xFF) for shift in range(0, 128, 8)])
+
+
 def ir_receive(key_index, offset, char1, char2):
     global keys
-    print('receiving')
-    if not 0 < key_index < len(keys):
+    print('r', offset)
+    if not 0 <= key_index < len(keys):
         print('Got wrong key index')
+        draw_normal()
         return
-    if not 0 < offset < len(key_data):
+    if 0 <= offset <= 14:
+        key = key_to_bytes(keys[key_index])
+        key[offset] = char1
+        key[offset+1] = char2
+        keys[key_index] = int.from_bytes(key, 'big')
+        draw_receive(key_index, offset/16)
+    elif offset == 16 and char2 == 0:
+        checksum = crc.crc8(key_to_bytes(keys[key_index]))
+        digest = checksum.digest()[0]
+        if digest == char1:
+            print('Matching checksums')
+            machine.nvs_setstr('system', 'received_key%d' % key_index, str(keys[key_index]))
+        else:
+            print('Checksum mismatch: %d != %d' % (digest, char1))
+            keys[key_index] = 0
+        draw_normal()
+    else:
         print('Got wrong offset')
-        return
-    keys[current_key_index][offset] = chr(char1)
-    keys[current_key_index][offset+1] = chr(char2)
+        draw_normal()
 
 
 def send_own_key():
     global infra
-    print('starting sending')
+    # print('starting sending')
     infra.rx_disable()
-    for i in range(0, len(key_data), 2):
-        char1 = ord(key_data[i])
-        char2 = ord(key_data[i+1])
+    payload = key_to_bytes(key_data)
+    for i in range(0, len(payload), 2):
+        char1 = payload[i]
+        char2 = payload[i+1]
+        # print('s', i)
         infra.tx(key_no, i, char1, char2)
+        time.sleep(1)
+    checksum = crc.crc8(payload)
+    infra.tx(key_no, 16, checksum.digest()[0], 0)
+    time.sleep(1)
+    infra.tx(key_no, 16, checksum.digest()[0], 0)
     infra.rx_enable()
-    print('stopping sending')
-    return 5000
+    # print('stopping sending')
+    # return 2000 + random.randint(0, 2000)
 
+
+def up_key(pressed):
+    print('Up=', pressed)
+    if pressed:
+        draw_send(key_no)
+        send_own_key()
+        draw_normal()
+
+draw_normal()
 
 infra = CustomIR(badge='ecsc2021', freq=40000)
 infra.command = ir_receive
 infra.rx_enable()
 
-virtualtimers.begin(5000)
-virtualtimers.new(5000, send_own_key)
+buttons.assign(buttons.BTN_UP, up_key)

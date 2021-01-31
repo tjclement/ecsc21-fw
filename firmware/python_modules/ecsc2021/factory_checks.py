@@ -48,7 +48,8 @@ with open('/private/system/logo_med.png', 'wb') as file:
 # Add 1 emergency mode key
 import random
 keys = [41626553378667308630155655388182919513, 38482367772661019525134672504909903562, 35338182166654730420113689621636887611]
-key_index = random.randrange(0, len(keys))
+# key_index = random.randrange(0, len(keys))
+key_index = 0
 key = keys[key_index]
 machine.nvs_setstr('system', 'emergency_key', ('#%d - ' % key_index) + str(key))
 
