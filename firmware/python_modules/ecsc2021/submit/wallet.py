@@ -1,6 +1,6 @@
 import flags, easydraw, time
 
-_message = 'We need to know how Zagan handles their finances in the underground. Please help us find the address of his bitcoin wallet. You can submit it to us here via the terminal.'
+_message = 'We need to know how Zagan handles their finances in the underground. Please help us find the address of their bitcoin wallet. You can submit it to us here via the terminal.'
 
 print(_message)
 easydraw.messageCentered('Zagan\'s Bitcoin Wallet\n\n\n' + _message)

@@ -37,15 +37,15 @@ key_str = machine.nvs_getstr('system', 'emergency_key')
 key_no, key_data = key_str.split(' - ')
 key_no = int(key_no[1:])
 key_data = int(key_data)
-message = 'In matters of extreme importance, 3 members of the Sixth Circle can together unlock emergency contact details of Zagan.\n\n' \
-          'Use this only as a last resort. Each of you has a key, and 3 keys together form a Shamir\'s shared secret.\n\n' \
+message = 'In matters of extreme importance, 6 members of the Sixth Circle can together unlock emergency contact details of Zagan.\n\n' \
+          'Use this only as a last resort. Each of you has a key, and 6 keys together form a Shamir\'s shared secret.\n\n' \
           'Send your key by holding the IR reader on the back of your handheld near another, and pressing the up key.\n\n' \
           'In the terminal you will find the "shamirs" python module available to you. Once you have obtained the secret (a number), call authenticate(<secret>).'
 
 print(message)
 
 keys = []
-for i in range(3):
+for i in range(6):
     if key_no == i:
         keys.append(key_data)
     else:

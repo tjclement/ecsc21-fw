@@ -18,7 +18,7 @@ def print_flag(password):
     for index, char in enumerate(_pass):
         if char != password[index]:
             print('Password is incorrect.')
-            print('Debug: password check took %f seconds' % (time.time()-start))
+            print('Perf: check took %f seconds' % (time.time()-start))
             return
         else:
             time.sleep(0.01)
