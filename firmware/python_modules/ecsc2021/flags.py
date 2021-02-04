@@ -1,9 +1,9 @@
 # Privkey is (3152717306533824157420536322537714593453118808047298838197, 3033655168601492576945143378005671139705433121922877345289)
-print('WARNING: create_flag is still present in firmware!')
-def create_flag(challenge, points):
-    n, e = (3152717306533824157420536322537714593453118808047298838197, 3033655168601492576945143378005671139705433121922877345289)
-    import rsa, binascii
-    return 'CTF{%s}' % binascii.hexlify(rsa.encrypt(n, e, '%s,%d' % (challenge, points))).decode()
+# print('WARNING: create_flag is still present in firmware!')
+# def create_flag(challenge, points):
+#     n, e = (3152717306533824157420536322537714593453118808047298838197, 3033655168601492576945143378005671139705433121922877345289)
+#     import rsa, binascii
+#     return 'CTF{%s}' % binascii.hexlify(rsa.encrypt(n, e, '%s,%d' % (challenge, points))).decode()
 
 def parse_flag(flag):
     # print('ckeckpoint -1.0')
