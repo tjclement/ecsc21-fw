@@ -346,6 +346,10 @@ extern const struct _mp_obj_module_t neopixel_module;
 extern const struct _mp_obj_module_t lora_module;
 #endif
 
+#ifdef CONFIG_DRIVER_RMT_ENABLE
+extern const struct _mp_obj_module_t rmt_module;
+#endif
+
 #ifdef CONFIG_MICROPY_USE_REQUESTS
 extern const struct _mp_obj_module_t mp_module_requests;
 #define BUILTIN_MODULE_REQUESTS { MP_OBJ_NEW_QSTR(MP_QSTR_requests), (mp_obj_t)&mp_module_requests },
@@ -479,6 +483,12 @@ extern const struct _mp_obj_module_t am2320_module;
 #define BUILTIN_MODULE_AM2320
 #endif
 
+#ifdef CONFIG_DRIVER_RMT_ENABLE
+#define BUILTIN_MODULE_RMT { MP_OBJ_NEW_QSTR(MP_QSTR_rmt), (mp_obj_t)&rmt_module },
+#else
+#define BUILTIN_MODULE_RMT
+#endif
+
 #ifdef CONFIG_DRIVER_PCA9555_ENABLE
 extern const struct _mp_obj_module_t pca9555_module;
 #define BUILTIN_MODULE_PCA9555 { MP_OBJ_NEW_QSTR(MP_QSTR_pca9555), (mp_obj_t)&pca9555_module },
@@ -523,6 +533,7 @@ extern const struct _mp_obj_module_t pca9555_module;
 	BUILTIN_MODULE_DISOBEY_SAMD \
 	BUILTIN_MODULE_MPU6050 \
 	BUILTIN_MODULE_AM2320 \
+	BUILTIN_MODULE_RMT \
 	BUILTIN_MODULE_PCA9555 \
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_espnow), (mp_obj_t)&espnow_module }, \
 

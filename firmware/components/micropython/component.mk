@@ -124,6 +124,7 @@ MP_EXTRA_INC += -I$(PROJECT_PATH)/components/driver_sdcard/include
 MP_EXTRA_INC += -I$(PROJECT_PATH)/components/driver_rtcmem/include
 MP_EXTRA_INC += -I$(PROJECT_PATH)/components/driver_radio_lora/include
 MP_EXTRA_INC += -I$(PROJECT_PATH)/components/driver_io_pca9555/include
+MP_EXTRA_INC += -I$(PROJECT_PATH)/components/driver_rmt/include
 MP_EXTRA_INC += -I$(PROJECT_PATH)/components/libopus/include
 MP_EXTRA_INC += -I$(PROJECT_PATH)/components/png
 MP_EXTRA_INC += -I$(IDF_PATH)/components/esp_ringbuf/include
@@ -283,6 +284,11 @@ endif
 ifdef CONFIG_DRIVER_AM2320_ENABLE
 MP_EXTRA_INC += -I$(PROJECT_PATH)/components/driver_sensor_am2320/include
 SRC_C += esp32/modam2320.c
+endif
+
+ifdef CONFIG_DRIVER_RMT_ENABLE
+MP_EXTRA_INC += -I$(PROJECT_PATH)/components/driver_rmt/include
+SRC_C += esp32/modrmt.c
 endif
 
 EXTMOD_SRC_C = $(addprefix extmod/,\

@@ -1,5 +1,7 @@
+import struct
+
 import machine, shamirs, easydraw, display, time, virtualtimers, buttons
-from ir import CustomIR
+import rmt
 import crc8 as crc
 
 prime = 44770738984673597735176638240122602127
@@ -82,8 +84,9 @@ def key_to_bytes(key: int):
     return bytearray([((key >> (120-shift)) & 0xFF) for shift in range(0, 128, 8)])
 
 
-def ir_receive(key_index, offset, char1, char2):
+def ir_receive(data):
     global keys
+    key_index, offset, char1, char2 = struct.unpack('BBBB', data)
     print('r', offset)
     if not 0 <= key_index < len(keys):
         print('Got wrong key index')
@@ -104,6 +107,8 @@ def ir_receive(key_index, offset, char1, char2):
         else:
             print('Checksum mismatch: %d != %d' % (digest, char1))
             keys[key_index] = 0
+        draw_receive(key_index, offset/16)
+        time.sleep(0.2)
         draw_normal()
     else:
         print('Got wrong offset')
@@ -111,21 +116,19 @@ def ir_receive(key_index, offset, char1, char2):
 
 
 def send_own_key():
-    global infra
     # print('starting sending')
-    infra.rx_disable()
+    rmt.disable_rx()
     payload = key_to_bytes(key_data)
+    to_send = b''
     for i in range(0, len(payload), 2):
         char1 = payload[i]
         char2 = payload[i+1]
         # print('s', i)
-        infra.tx(key_no, i, char1, char2)
-        time.sleep(1)
+        to_send += bytes([key_no, i, char1, char2])
     checksum = crc.crc8(payload)
-    infra.tx(key_no, 16, checksum.digest()[0], 0)
-    time.sleep(1)
-    infra.tx(key_no, 16, checksum.digest()[0], 0)
-    infra.rx_enable()
+    to_send += bytes([key_no, 16, checksum.digest()[0], 0])
+    rmt.nec_tx_bytes(to_send)
+    rmt.disable_rx()
     # print('stopping sending')
     # return 2000 + random.randint(0, 2000)
 
@@ -139,8 +142,7 @@ def up_key(pressed):
 
 draw_normal()
 
-infra = CustomIR(badge='ecsc2021', freq=40000)
-infra.command = ir_receive
-infra.rx_enable()
+rmt.nec_rx_handler(ir_receive)
+rmt.enable_rx()
 
 buttons.assign(buttons.BTN_UP, up_key)

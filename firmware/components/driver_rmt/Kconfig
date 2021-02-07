@@ -1,0 +1,18 @@
+menu "Driver: (IR) Remote"
+	config DRIVER_RMT_ENABLE
+		bool "Enable the IR RMT driver"
+		default n
+	
+	config PIN_NUM_RMT_TX
+		depends on DRIVER_RMT_ENABLE
+		int "GPIO to use as TX pin"
+	
+	config PIN_NUM_RMT_RX
+		depends on DRIVER_RMT_ENABLE
+		int "GPIO to use as RX pin"
+	
+	config RMT_CARRIER_FREQ_HZ
+		depends on DRIVER_I2C_ENABLE
+		int "Carrier frequency in Hz"
+		default 40000
+endmenu
