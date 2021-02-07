@@ -22,10 +22,11 @@ _menu_items = {
     _top_menu: [
         ('Newbie CTF Entrance Exam', _challenge_menu),
         ('View found flags', lambda: system.start('showflags')),
-        ('(debug) Cheats', lambda: system.start('cheats')),
-        ('(debug) Shell', lambda: system.start('shell')),
-        ('(debug) Update firmware', lambda: system.start('force_update')),
-        ('(debug) Factory reset', lambda: system.start('reset')),
+        # ('(debug) Cheats', lambda: system.start('cheats')),
+        # ('(debug) Shell', lambda: system.start('shell')),
+        # ('(debug) Update firmware', lambda: system.start('force_update')),
+        # ('(debug) Factory reset', lambda: system.start('reset')),
+        # ('(debug) IR Test', lambda: system.start('emergency')),
     ],
     _challenge_menu: [
         ('Script Kiddie (100 pts)', lambda: system.start('challenges.1a')),
