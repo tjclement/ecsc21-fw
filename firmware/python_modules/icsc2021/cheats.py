@@ -7,7 +7,7 @@ points = []
 def run():
     _challs = {
         '1a': {'name': 'Script Kiddie', 'points': 100},
-        '1b': {'name': 'King of Regex', 'points': 100},
+        '1b': {'name': 'Insane in the Membrain', 'points': 100},
         '1c': {'name': 'Security through Obscurity', 'points': 100},
         '1d': {'name': 'Timing is Key', 'points': 200},
         '1e': {'name': 'Sailing in Side Channels', 'points': 200},

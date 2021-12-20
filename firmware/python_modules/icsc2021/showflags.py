@@ -5,7 +5,7 @@ def run():
     import flags  # Import needs to be delayed to work around LoadStoreError crash
     _challnames = {
         '1a': 'Script Kiddie',
-        '1b': 'King of Regex',
+        '1b': 'Insane in the Membrain',
         '1c': 'Security through Obscurity',
         '1d': 'Timing is Key',
         '1e': 'Sailing in Side Channels',
