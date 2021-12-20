@@ -8,11 +8,11 @@ from listbox import List
 _pin2=machine.PWM(15, freq=40000, duty=50)
 display.orientation(270)
 
-_name = machine.nvs_getint('system', 'nickname') or 'UnnamedHax0r'
 _showing_details = False
 
 _top_menu = List(0, 0, display.width(), display.height(),
-                 header='Greetings, %s.' % _name, logo='/private/system/logo_small.png')
+                 header='WARNING: this device is being wiped remotely.',
+                 logo='/private/system/logo_small.png')
 _challenge_menu = List(0, 0, display.width(), display.height())
 _jobs_menu = List(0, 0, display.width(), display.height())
 _messages_menu = List(0, 0, display.width(), display.height())
@@ -49,8 +49,6 @@ if machine.nvs_getint('system', 'jobs_unlocked'):
     _menu_items[_top_menu].insert(2, ('Job board', _jobs_menu))
     _menu_items[_top_menu].insert(3, ('Message board', _messages_menu))
     _menu_items[_top_menu].insert(4, ('Emergency Contact', lambda: system.start('emergency')))
-else:
-    _top_menu.header += ' Complete 700 points from the entrance exam to unlock the job board.'
 
 if machine.nvs_getint('system', 'message_seen'):
     _menu_items[_top_menu].insert(5, ('Europol Submissions', _intelligence_menu))
