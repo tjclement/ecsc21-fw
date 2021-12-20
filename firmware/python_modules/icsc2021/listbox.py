@@ -1,14 +1,17 @@
 import display, gc, easydraw
+import time
 
 _activeList = {}
 
+
 # Listbox UI element
-class List():
-	def __init__(self, x, y, w, h, font="roboto_regular12", header=None, logo=None):
+class List:
+	def __init__(self, x, y, w, h, countdown_time, font="roboto_regular12", header=None, logo=None):
 		self.x = x
 		self.y = y
 		self.w = w
 		self.h = h
+		self.countdown_time = countdown_time
 		self.font = font
 		self.header = header
 		self.logo = logo
@@ -20,7 +23,7 @@ class List():
 		self.offset = 0
 		self.visible(True)
 		self.enabled(True)
-	
+
 	def draw(self):
 		if self._visible:
 			display.drawRect(self.x, self.y, self.w, self.h, True, 0x000000)
@@ -38,6 +41,18 @@ class List():
 					display.drawText(cursor[0]+2, cursor[1], line, 0xFFFFFF, "exo2_bold12")
 					cursor = (cursor[0], cursor[1] + lineHeight)
 				cursor = (cursor[0], cursor[1] + 20)
+
+			# Draw countdown timer
+			countdown = time.strftime('%H:%M:%S', time.gmtime(self.countdown_time))
+			# For increased visual effect and a more uncomfortable feeling on each off second surround the countdown
+			if self.countdown_time % 2 == 0:
+				countdown = "- %s -" % countdown
+			lineHeight = display.getTextHeight(" ", "alarm_clock_regular16")
+			lineWidth = display.getTextWidth(countdown, "alarm_clock_regular16")
+			centerPosition = int((display.width() - display.getTextWidth(countdown, "alarm_clock_regular16")) / 2)
+			display.drawText(cursor[0] + centerPosition, cursor[1], countdown, 0xFF0000, "alarm_clock_regular16")
+			cursor = (cursor[0], cursor[1] + lineHeight)
+			cursor = (cursor[0], cursor[1] + 20)
 
 			totalHeight = 0
 			for i in range(len(self.items)-self.offset):

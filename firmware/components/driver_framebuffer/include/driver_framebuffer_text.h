@@ -32,6 +32,7 @@ extern const GFXfont Exo2_Bold_18pt7b;
 extern const GFXfont Exo2_Regular_12pt7b;
 extern const GFXfont Exo2_Thin_12pt7b;
 extern const GFXfont Exo2_Bold_12pt7b;
+extern const GFXfont alarm_clock_16pt7b;
 extern const GFXfont ipane7x5;
 
 /* Functions */
