@@ -42,8 +42,14 @@ git submodule update --init --recursive
 
 Next, copy the xtensa build toolchain for your OS (currently supporting Linux and Mac OS) from /toolchains/, and unpack and save it as /xtensa-esp32-elf/ in the project root folder:
 
+For linux:
 ```
 unzip -p toolchain/xtensa-esp32-elf-linux64.zip xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0.tar | tar xv
+```
+
+For mac: 
+```
+unzip toolchain/xtensa-esp32-elf-mac.zip
 ```
 
 # Selecting a specific existing badge
