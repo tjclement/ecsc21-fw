@@ -56,7 +56,7 @@ unzip toolchain/xtensa-esp32-elf-mac.zip
 Copy the relevant config file from `/firmware/configs/<badge>_defconfig` to `/firmware/sdkconfig`:
 
 ```
-cp firmware/configs/icsc2021_defconfig firmware/sdkconfig
+cp firmware/configs/icsc22_defconfig firmware/sdkconfig
 ```
 
 # Build instructions
