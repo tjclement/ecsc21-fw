@@ -40,6 +40,7 @@ def solve(program):
                 routine = self.__TRANSITION_MAP[command]
                 routine(self, command, count)
             if (self.stepcount % 100) == 0:
+                # FIXME: this doesn't suppress the WDT reset messages
                 # Feed the watchdog
                 esp.wdt_reset()
             self.stepcount += 1
@@ -203,7 +204,7 @@ def solve(program):
     if same:
         # TODO: Add the actual flag
         flag = 'CTF{%s}' % '<FLAG_HERE>'
-        print('Sequence pass! Here is the flag: %s', flag)
+        print('Sequence pass! Here is the flag: %s' % flag)
         flags.submit_flag(flag)
     else:
         print('Incorrect sequence. Please try again.')
