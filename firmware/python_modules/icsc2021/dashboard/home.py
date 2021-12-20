@@ -105,7 +105,10 @@ display.flush()
 
 def update_countdown():
     _menu.countdown_time -= 1
-    machine.nvs_setint('system', 'countdown_time', _menu.countdown_time)
+
+    # Protect nvs by persisting the timer only once each 10 seconds
+    if _menu.countdown_time % 10 == 0:
+        machine.nvs_setint('system', 'countdown_time', _menu.countdown_time)
 
     _menu_stack[-1].draw()
     display.flush()
