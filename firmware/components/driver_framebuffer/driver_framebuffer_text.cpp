@@ -74,6 +74,7 @@ const char* fontNames[] = {
 	"exo2_regular12",         //TROOPERS
 	"exo2_thin12",            //TROOPERS
 	"exo2_bold12",            //TROOPERS
+	"alarm_clock_regular16",  //ICSC2022
 	NULL
 };
 
@@ -104,6 +105,7 @@ const GFXfont* fontPointers[] = {
 	&Exo2_Regular_12pt7b,
 	&Exo2_Thin_12pt7b,
 	&Exo2_Bold_12pt7b,
+	&alarm_clock_16pt7b,
 };
 
 /* Private functions */

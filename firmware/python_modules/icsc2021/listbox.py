@@ -2,8 +2,9 @@ import display, gc, easydraw
 
 _activeList = {}
 
+
 # Listbox UI element
-class List():
+class List:
 	def __init__(self, x, y, w, h, font="roboto_regular12", header=None, logo=None):
 		self.x = x
 		self.y = y
@@ -38,6 +39,15 @@ class List():
 					display.drawText(cursor[0]+2, cursor[1], line, 0xFFFFFF, "exo2_bold12")
 					cursor = (cursor[0], cursor[1] + lineHeight)
 				cursor = (cursor[0], cursor[1] + 20)
+
+			# Draw countdown timer
+			cursor = (cursor[0], cursor[1] + 10)
+			lineHeight = display.getTextHeight(" ", "alarm_clock_regular16")
+			lines = easydraw.lineSplit('07:59:23', self.w, "alarm_clock_regular16")
+			for line in lines:
+				display.drawText(cursor[0] + 2, cursor[1], line, 0xFFFFFF, "alarm_clock_regular16")
+				cursor = (cursor[0], cursor[1] + lineHeight)
+			cursor = (cursor[0], cursor[1] + 20)
 
 			totalHeight = 0
 			for i in range(len(self.items)-self.offset):
