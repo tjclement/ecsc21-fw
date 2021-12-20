@@ -1,15 +1,17 @@
 import display, gc, easydraw
+import time
 
 _activeList = {}
 
 
 # Listbox UI element
 class List:
-	def __init__(self, x, y, w, h, font="roboto_regular12", header=None, logo=None):
+	def __init__(self, x, y, w, h, countdown_time, font="roboto_regular12", header=None, logo=None):
 		self.x = x
 		self.y = y
 		self.w = w
 		self.h = h
+		self.countdown_time = countdown_time
 		self.font = font
 		self.header = header
 		self.logo = logo
@@ -21,7 +23,7 @@ class List:
 		self.offset = 0
 		self.visible(True)
 		self.enabled(True)
-	
+
 	def draw(self):
 		if self._visible:
 			display.drawRect(self.x, self.y, self.w, self.h, True, 0x000000)
@@ -41,7 +43,7 @@ class List:
 				cursor = (cursor[0], cursor[1] + 20)
 
 			# Draw countdown timer
-			countdown = '07:59:23'
+			countdown = time.strftime('%H:%M:%S', time.gmtime(self.countdown_time))
 			lineHeight = display.getTextHeight(" ", "alarm_clock_regular16")
 			lineWidth = display.getTextWidth(countdown, "alarm_clock_regular16")
 			centerPosition = int((display.width() - display.getTextWidth(countdown, "alarm_clock_regular16")) / 2)
