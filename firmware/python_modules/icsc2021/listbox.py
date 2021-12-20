@@ -41,12 +41,12 @@ class List:
 				cursor = (cursor[0], cursor[1] + 20)
 
 			# Draw countdown timer
-			cursor = (cursor[0], cursor[1] + 10)
+			countdown = '07:59:23'
 			lineHeight = display.getTextHeight(" ", "alarm_clock_regular16")
-			lines = easydraw.lineSplit('07:59:23', self.w, "alarm_clock_regular16")
-			for line in lines:
-				display.drawText(cursor[0] + 2, cursor[1], line, 0xFFFFFF, "alarm_clock_regular16")
-				cursor = (cursor[0], cursor[1] + lineHeight)
+			lineWidth = display.getTextWidth(countdown, "alarm_clock_regular16")
+			centerPosition = int((display.width() - display.getTextWidth(countdown, "alarm_clock_regular16")) / 2)
+			display.drawText(cursor[0] + centerPosition, cursor[1], countdown, 0xFFFFFF, "alarm_clock_regular16")
+			cursor = (cursor[0], cursor[1] + lineHeight)
 			cursor = (cursor[0], cursor[1] + 20)
 
 			totalHeight = 0
