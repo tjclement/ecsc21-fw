@@ -44,10 +44,13 @@ class List:
 
 			# Draw countdown timer
 			countdown = time.strftime('%H:%M:%S', time.gmtime(self.countdown_time))
+			# For increased visual effect and a more uncomfortable feeling on each off second surround the countdown
+			if self.countdown_time % 2 == 0:
+				countdown = "- %s -" % countdown
 			lineHeight = display.getTextHeight(" ", "alarm_clock_regular16")
 			lineWidth = display.getTextWidth(countdown, "alarm_clock_regular16")
 			centerPosition = int((display.width() - display.getTextWidth(countdown, "alarm_clock_regular16")) / 2)
-			display.drawText(cursor[0] + centerPosition, cursor[1], countdown, 0xFFFFFF, "alarm_clock_regular16")
+			display.drawText(cursor[0] + centerPosition, cursor[1], countdown, 0xFF0000, "alarm_clock_regular16")
 			cursor = (cursor[0], cursor[1] + lineHeight)
 			cursor = (cursor[0], cursor[1] + 20)
 
