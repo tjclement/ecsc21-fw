@@ -1,18 +1,23 @@
 # Device specific system functions
 
+
 def configureWakeupSource():
-	#machine.RTC().wake_on_ext0(pin = machine.Pin(34), level = 0)
-	#machine.RTC().wake_on_ext1([machine.Pin(5, machine.Pin.IN, machine.Pin.PULL_UP)], 0)
-	return False # Not supported
+    # machine.RTC().wake_on_ext0(pin = machine.Pin(34), level = 0)
+    # machine.RTC().wake_on_ext1([machine.Pin(5, machine.Pin.IN, machine.Pin.PULL_UP)], 0)
+    return False  # Not supported
+
 
 def prepareForSleep():
-	pass
+    pass
+
 
 def prepareForWakeup():
-	pass
+    pass
+
 
 def showLoadingScreen(app=""):
-	pass # Not supported
+    pass  # Not supported
+
 
 def showMessage(message="", icon=None):
-	pass # Not supported
+    pass  # Not supported

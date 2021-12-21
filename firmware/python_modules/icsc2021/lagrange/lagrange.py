@@ -10,7 +10,7 @@ def inv(a, prime):
     """
     Compute multiplicative inverse modulo a prime.
     """
-    return pow(a, prime-2, prime)
+    return pow(a, prime - 2, prime)
 
 
 def interpolate(points, prime):
@@ -55,9 +55,11 @@ def interpolate(points, prime):
     """
     if isinstance(points, list) and all([isinstance(p, int) for p in points]):
         points = dict(zip(range(1, len(points) + 1), points))
-    elif isinstance(points, (list, set, tuple)) and\
-       len(points) > 0 and\
-       all([isinstance(p, (list, tuple)) and len(p) == 2 for p in points]):
+    elif (
+        isinstance(points, (list, set, tuple))
+        and len(points) > 0
+        and all([isinstance(p, (list, tuple)) and len(p) == 2 for p in points])
+    ):
         points = dict([tuple(p) for p in points])
     elif isinstance(points, dict):
         pass
@@ -76,12 +78,13 @@ def interpolate(points, prime):
         coefficients[i] = 1
         for j in range(1, len(points) + 1):
             if j != i:
-                coefficients[i] = (coefficients[i] * (0-j) * inv(i-j, prime)) % prime
+                coefficients[i] = (coefficients[i] * (0 - j) * inv(i - j, prime)) % prime
 
     value = 0
-    for i in range(1, len(points)+1):
+    for i in range(1, len(points) + 1):
         value = (value + points[i] * coefficients[i]) % prime
 
     return value
 
-lagrange = interpolate # Synonym.
+
+lagrange = interpolate  # Synonym.

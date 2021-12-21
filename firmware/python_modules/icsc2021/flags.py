@@ -1,15 +1,23 @@
 # Privkey is (3152717306533824157420536322537714593453118808047298838197, 3033655168601492576945143378005671139705433121922877345289)
-print('WARNING: create_flag is still present in firmware!')
+print("WARNING: create_flag is still present in firmware!")
+
+
 def create_flag(challenge, points):
-    n, e = (3152717306533824157420536322537714593453118808047298838197, 3033655168601492576945143378005671139705433121922877345289)
+    n, e = (
+        3152717306533824157420536322537714593453118808047298838197,
+        3033655168601492576945143378005671139705433121922877345289,
+    )
     import rsa, binascii
-    return 'CTF{%s}' % binascii.hexlify(rsa.encrypt(n, e, '%s,%d' % (challenge, points))).decode()
+
+    return "CTF{%s}" % binascii.hexlify(rsa.encrypt(n, e, "%s,%d" % (challenge, points))).decode()
+
 
 def parse_flag(flag):
     # print('ckeckpoint -1.0')
     import binascii, ure, rsa, valuestore
+
     # print('ckeckpoint 0.0')
-    match = ure.match('CTF\{(.*)\}', flag)
+    match = ure.match("CTF\{(.*)\}", flag)
     # print('ckeckpoint 1.0')
     try:
         contents = match.group(1)
@@ -29,7 +37,7 @@ def parse_flag(flag):
         # print('ckeckpoint 4.2')
         return None
     try:
-        match = ure.match('(\d[a-z]),(\d\d\d)', decrypted)
+        match = ure.match("(\d[a-z]),(\d\d\d)", decrypted)
         # print('ckeckpoint 5.0')
         challenge, points = match.group(1), int(match.group(2))
         # print('ckeckpoint 5.1')
@@ -45,12 +53,13 @@ def parse_flag(flag):
 
 def get_total_points():
     import valuestore
-    flag_dict = valuestore.load(keyname='flags')
+
+    flag_dict = valuestore.load(keyname="flags")
     del valuestore
     total_points = 0
     for flag_object in flag_dict.values():
         try:
-            chall, pts = parse_flag(flag_object['flag'])
+            chall, pts = parse_flag(flag_object["flag"])
             total_points += pts
         except:
             pass
@@ -60,43 +69,44 @@ def get_total_points():
 def submit_flag(flag):
     result = parse_flag(flag)
     if result is None:
-        print('This is not a correct flag!')
+        print("This is not a correct flag!")
         return
     try:
         challenge, points = result
     except:
-        print('This is not a correct flag!')
+        print("This is not a correct flag!")
         return
 
     import valuestore
-    flag_dict = valuestore.load(keyname='flags')
-    flag_dict[challenge] = {
-        'points': points,
-        'flag': flag
-    }
-    valuestore.save(keyname='flags', value=flag_dict)
-    print('Successfully submitted your flag!')
+
+    flag_dict = valuestore.load(keyname="flags")
+    flag_dict[challenge] = {"points": points, "flag": flag}
+    valuestore.save(keyname="flags", value=flag_dict)
+    print("Successfully submitted your flag!")
 
     import machine
+
     total_points = 0
     for flag_object in flag_dict.values():
         try:
-            chall, pts = parse_flag(flag_object['flag'])
+            chall, pts = parse_flag(flag_object["flag"])
             total_points += pts
         except:
             pass
 
-    if not machine.nvs_getint('system', 'jobs_unlocked'):
+    if not machine.nvs_getint("system", "jobs_unlocked"):
         if total_points >= 700:
             import system
-            system.start('unlock_jobs')
 
-    if not machine.nvs_getint('system', 'ctf_done'):
+            system.start("unlock_jobs")
+
+    if not machine.nvs_getint("system", "ctf_done"):
         if total_points == 1700:
-            machine.nvs_setint('system', 'ctf_done', 1)
+            machine.nvs_setint("system", "ctf_done", 1)
             import easydraw, time, system
+
             time.sleep(1)
-            easydraw.messageCentered('Congratulations!\n\n\n\n\nYou have finished all challenges!')
+            easydraw.messageCentered("Congratulations!\n\n\n\n\nYou have finished all challenges!")
             time.sleep(3)
             system.home()
     del valuestore
