@@ -185,7 +185,7 @@ def draw_task():
     global drawCallback #The function that allows us to hook into our host
     
     if drawCallback == None:
-		return 100 #Don't draw if we can't hook
+        return 100 #Don't draw if we can't hook
     
     global drawCallbacks #The functions of the services
     requestedInterval = 99999999
@@ -199,10 +199,10 @@ def draw_task():
         rqi = 0
         try:
             cb = drawCallbacks[i].draw
-	    try:
-		[rqi, space_used] = cb(y, False)
-	    except:
-		[rqi, space_used] = cb(y)
+            try:
+                [rqi, space_used] = cb(y, False)
+            except:
+                [rqi, space_used] = cb(y)
             y = y - space_used
         except BaseException as e:
             print("[SERVICES] Exception in service draw:")
@@ -251,10 +251,10 @@ def force_draw(goingToSleep=False):
                         cb = srv.draw_going_to_sleep
                     except:
                         cb = srv.draw
-		try:
-		    [rqi, space_used] = cb(y, True)
-		except:
-		    [rqi, space_used] = cb(y)
+                try:
+                    [rqi, space_used] = cb(y, True)
+                except:
+                    [rqi, space_used] = cb(y)
                 y = y - space_used
             except BaseException as e:
                 print("[SERVICES] Exception in service draw: ")
