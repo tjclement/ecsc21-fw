@@ -1,7 +1,7 @@
 import usocket
 
-class Response:
 
+class Response:
     def __init__(self, f):
         self.raw = f
         self.encoding = "utf-8"
@@ -27,6 +27,7 @@ class Response:
 
     def json(self):
         import ujson
+
         return ujson.loads(self.content)
 
 
@@ -40,6 +41,7 @@ def request(method, url, data=None, json=None, headers={}, stream=None, timeout=
         port = 80
     elif proto == "https:":
         import ussl
+
         port = 443
     else:
         raise ValueError("Unsupported protocol: " + proto)
@@ -52,8 +54,8 @@ def request(method, url, data=None, json=None, headers={}, stream=None, timeout=
     addr = ai[0][-1]
     s = usocket.socket()
     if timeout:
-	s.settimeout(timeout)
-    s.connect(addr)
+        s.settimeout(timeout)
+        s.connect(addr)
     if proto == "https:":
         s = ussl.wrap_socket(s, server_hostname=host)
     s.write(b"%s /%s HTTP/1.0\r\n" % (method, path))
@@ -68,6 +70,7 @@ def request(method, url, data=None, json=None, headers={}, stream=None, timeout=
     if json is not None:
         assert data is None
         import ujson
+
         data = ujson.dumps(json)
     if data:
         s.write(b"Content-Length: %d\r\n" % len(data))
@@ -78,12 +81,12 @@ def request(method, url, data=None, json=None, headers={}, stream=None, timeout=
     l = s.readline()
     protover, status, msg = l.split(None, 2)
     status = int(status)
-    #print(protover, status, msg)
+    # print(protover, status, msg)
     while True:
         l = s.readline()
         if not l or l == b"\r\n":
             break
-        #print(l)
+        # print(l)
         if l.lower().startswith(b"transfer-encoding:"):
             if b"chunked" in l:
                 s.close()
@@ -93,7 +96,9 @@ def request(method, url, data=None, json=None, headers={}, stream=None, timeout=
             if redirect <= 0:
                 raise ValueError("Too many redirects")
             else:
-                return request(method, l[9:len(l)].decode().strip(), data, json, headers, stream, timeout, redirect-1)
+                return request(
+                    method, l[9 : len(l)].decode().strip(), data, json, headers, stream, timeout, redirect - 1
+                )
 
     resp = Response(s)
     resp.status_code = status
@@ -104,17 +109,22 @@ def request(method, url, data=None, json=None, headers={}, stream=None, timeout=
 def head(url, **kw):
     return request("HEAD", url, **kw)
 
+
 def get(url, **kw):
     return request("GET", url, **kw)
+
 
 def post(url, **kw):
     return request("POST", url, **kw)
 
+
 def put(url, **kw):
     return request("PUT", url, **kw)
 
+
 def patch(url, **kw):
     return request("PATCH", url, **kw)
+
 
 def delete(url, **kw):
     return request("DELETE", url, **kw)
