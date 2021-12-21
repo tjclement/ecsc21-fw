@@ -50,78 +50,25 @@ def listApps():
     return apps
 
 
+# fmt: off
 term.header(True, "Loading...")
 apps = listApps()
 amountOfUserApps = len(apps)
-apps.append(
-    {"path": "dashboard.home", "name": "Home", "icon": None, "category": "system"}
-)
-apps.append(
-    {
-        "path": "dashboard.installer",
-        "name": "Installer",
-        "icon": None,
-        "category": "system",
-    }
-)
+apps.append({"path": "dashboard.home", "name": "Home", "icon": None, "category": "system"})
+apps.append({"path": "dashboard.installer", "name": "Installer", "icon": None, "category": "system"})
+
 if amountOfUserApps > 0:
-    apps.append(
-        {
-            "path": "dashboard.tools.uninstall",
-            "name": "Remove an app",
-            "icon": None,
-            "category": "system",
-        }
-    )
-    apps.append(
-        {
-            "path": "dashboard.tools.update_apps",
-            "name": "Update apps",
-            "icon": None,
-            "category": "system",
-        }
-    )
+    apps.append({"path": "dashboard.tools.uninstall", "name": "Remove an app", "icon": None, "category": "system"})
+    apps.append({"path": "dashboard.tools.update_apps", "name": "Update apps", "icon": None, "category": "system"})
+
 if haveSD:
-    apps.append(
-        {
-            "path": "dashboard.tools.movetosd",
-            "name": "Move from/to SD",
-            "icon": None,
-            "category": "system",
-        }
-    )
-apps.append(
-    {
-        "path": "dashboard.tools.update_firmware",
-        "name": "Update firmware",
-        "icon": None,
-        "category": "system",
-    }
-)
-apps.append(
-    {
-        "path": "dashboard.settings.nickname",
-        "name": "Configure nickname",
-        "icon": None,
-        "category": "system",
-    }
-)
-apps.append(
-    {
-        "path": "dashboard.settings.wifi",
-        "name": "WiFi setup",
-        "icon": None,
-        "category": "system",
-    }
-)
-apps.append(
-    {
-        "path": "dashboard.other.about",
-        "name": "About",
-        "icon": None,
-        "category": "system",
-    }
-)
+    apps.append({"path": "dashboard.tools.movetosd", "name": "Move from/to SD", "icon": None, "category": "system"})
+
+apps.append({"path": "dashboard.tools.update_firmware", "name": "Update firmware", "icon": None, "category": "system"})
+apps.append({"path": "dashboard.settings.nickname", "name": "Configure nickname", "icon": None, "category": "system"})
+apps.append({"path": "dashboard.settings.wifi", "name": "WiFi setup", "icon": None, "category": "system"})
+apps.append({"path": "dashboard.other.about", "name": "About", "icon": None, "category": "system"})
+# fmt: on
 
 # Terminal menu
 labels = []
