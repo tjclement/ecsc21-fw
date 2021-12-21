@@ -51,19 +51,22 @@ def parse_flag(flag):
     return challenge, points
 
 
-def get_total_points():
+def get_found_flags():
     import valuestore
 
     flag_dict = valuestore.load(keyname="flags")
     del valuestore
-    total_points = 0
+
+    found_flags = {}
+
     for flag_object in flag_dict.values():
         try:
-            chall, pts = parse_flag(flag_object["flag"])
-            total_points += pts
-        except:
+            challenge, points = parse_flag(flag_object["flag"])
+            found_flags[challenge] = points
+        except Exception:
             pass
-    return total_points
+
+    return found_flags
 
 
 def submit_flag(flag):

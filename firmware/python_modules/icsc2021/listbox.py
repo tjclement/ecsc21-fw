@@ -12,7 +12,7 @@ class List:
         y,
         w,
         h,
-        countdown_time,
+        countdown_time=None,
         font="roboto_regular12",
         header=None,
         logo=None,
@@ -53,55 +53,74 @@ class List:
                 cursor = (cursor[0], cursor[1] + 20)
 
             # Draw countdown timer
-            countdown = time.strftime("%H:%M:%S", time.gmtime(self.countdown_time))
-            # For increased visual effect and a more uncomfortable feeling on each off second surround the countdown
-            if self.countdown_time % 2 == 0:
-                countdown = "- %s -" % countdown
-            lineHeight = display.getTextHeight(" ", "alarm_clock_regular16")
-            lineWidth = display.getTextWidth(countdown, "alarm_clock_regular16")
-            centerPosition = int((display.width() - display.getTextWidth(countdown, "alarm_clock_regular16")) / 2)
-            display.drawText(
-                cursor[0] + centerPosition,
-                cursor[1],
-                countdown,
-                0xFF0000,
-                "alarm_clock_regular16",
-            )
-            cursor = (cursor[0], cursor[1] + lineHeight)
-            cursor = (cursor[0], cursor[1] + 20)
+            if self.countdown_time is not None:
+                countdown = time.strftime("%H:%M:%S", time.gmtime(self.countdown_time))
+                # For increased visual effect and a more uncomfortable feeling on each off second surround the countdown
+                if self.countdown_time % 2 == 0:
+                    countdown = "- %s -" % countdown
+                lineHeight = display.getTextHeight(" ", "alarm_clock_regular16")
+                lineWidth = display.getTextWidth(countdown, "alarm_clock_regular16")
+                centerPosition = int((display.width() - display.getTextWidth(countdown, "alarm_clock_regular16")) / 2)
+                display.drawText(
+                    cursor[0] + centerPosition,
+                    cursor[1],
+                    countdown,
+                    0xFF0000,
+                    "alarm_clock_regular16",
+                )
+                cursor = (cursor[0], cursor[1] + lineHeight)
+                cursor = (cursor[0], cursor[1] + 20)
 
             totalHeight = 0
             for i in range(len(self.items) - self.offset):
                 cursor = (self.x + 1, cursor[1])
-                item = self.items[self.offset + i]
-                lineHeight = display.getTextHeight(item, "roboto_regular12")
+                label, is_unlocked, points = self.items[self.offset + i]
+                lineHeight = display.getTextHeight(label, "roboto_regular12")
 
-                while display.getTextWidth(item, "roboto_regular12") > self.w:
-                    item = item[:-1]
+                while display.getTextWidth(label, "roboto_regular12") > self.w:
+                    label = label[:-1]
 
                 totalHeight += lineHeight + 6
                 if totalHeight >= self.h:
                     break
-                color = 0xFFFFFF
+
+                # If a challenge is unlocked render name with a grey colour to make it more visually clear
+                if is_unlocked:
+                    color = 0x999999
+                else:
+                    color = 0xFFFFFF
+
+                # Render selected menu item
                 if self.offset + i == self.selected:
                     display.drawRect(self.x, cursor[1], self.w, lineHeight + 6, True, 0xFFFFFF)
                     color = 0x000000
                 cursor = (self.x, cursor[1] + 3)
-                display.drawText(cursor[0] + 2, cursor[1], item + "\n", color, "roboto_regular12")
+
+                if is_unlocked is True:
+                    display.drawPng(cursor[0] + 2, cursor[1], "/private/system/unlocked_icon.png")
+                    cursor = (cursor[0] + 18, cursor[1])
+                elif is_unlocked is False:
+                    display.drawPng(cursor[0] + 2, cursor[1], "/private/system/locked_icon.png")
+                    cursor = (cursor[0] + 18, cursor[1])
+
+                display.drawText(cursor[0] + 2, cursor[1], label + "\n", color, "roboto_regular12")
+
+                if points is not None:
+                    points = str(points)
+                    width = display.getTextWidth(points, "roboto_regular12")
+                    display.drawText(self.w - 4 - width, cursor[1], points, color, "roboto_regular12")
+
                 cursor = (
                     self.x,
-                    cursor[1] + 3 + display.getTextHeight(item + "\n", "roboto_regular12"),
+                    cursor[1] + 3 + display.getTextHeight(label + "\n", "roboto_regular12"),
                 )
 
-    def add_item(self, caption):
-        if type(caption) == type(""):
-            i = self.items.append(caption)
-        elif type(caption) == type(b""):
-            i = self.items.append(caption.decode("utf-8"))
-        else:
-            i = self.items.append(str(caption))
+    def add_item(self, label, is_unlocked=None, points=None):
+        i = self.items.append((label, is_unlocked, points))
+
         if self._enabled:
             self.draw()
+
         return i
 
     def count(self):

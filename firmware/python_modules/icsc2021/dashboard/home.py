@@ -1,4 +1,4 @@
-import buttons, easydraw, display, machine, system, virtualtimers
+import buttons, easydraw, display, machine, system, virtualtimers, flags
 from listbox import List
 
 # Logo LED
@@ -19,15 +19,18 @@ _menu = List(
     logo="/private/system/logo_small.png",
 )
 
+found_flags = flags.get_found_flags()
+
 _menu_items = {
     _menu: [
-        ("Newbie CTF Entrance Exam", lambda: ""),
-        ("View found flags", lambda: system.start("showflags")),
-        ("(debug) Cheats", lambda: system.start("cheats")),
-        ("(debug) Shell", lambda: system.start("shell")),
-        ("(debug) Update firmware", lambda: system.start("force_update")),
-        ("(debug) Factory reset", lambda: system.start("reset")),
-        ("(debug) IR Test", lambda: system.start("emergency")),
+        ("View found flags", None, None, lambda: system.start("showflags")),
+        ("You shall not pass", "1a" in found_flags, 100, lambda: None),
+        ("Insane in the membrain", "1b" in found_flags, 200, lambda: None),
+        ("Got root?", "1c" in found_flags, 200, lambda: None),
+        ("RTFM", "1d" in found_flags, 300, lambda: None),
+        ("Wear and tear", "1e" in found_flags, 300, lambda: None),
+        ("Awesome ASM", "1f" in found_flags, 300, lambda: None),
+        ("Eccentric exfiltration", "1g" in found_flags, 700, lambda: None),
     ],
 }
 
@@ -40,8 +43,8 @@ def _build_menu():
 
     for menu, items in _menu_items.items():
         for item in items:
-            name, value = item
-            menu.add_item(name)
+            name, is_unlocked, points, _ = item
+            menu.add_item(name, is_unlocked, points)
 
     _menu_stack = [_menu]
 
@@ -85,7 +88,7 @@ def _on_right(pressed):
         return
     current_menu = _menu_stack[-1]
     selected_index = current_menu.selected_index()
-    name, value = _menu_items[current_menu][selected_index]
+    name, _, _, value = _menu_items[current_menu][selected_index]
     if callable(value):
         value()
     elif isinstance(value, List):
@@ -123,5 +126,5 @@ def update_countdown():
     return 1000  # Run again in 1 sec
 
 
-virtualtimers.begin(1000)
+virtualtimers.begin(100)
 virtualtimers.new(0, update_countdown)
