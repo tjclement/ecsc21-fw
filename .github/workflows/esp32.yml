@@ -2,9 +2,12 @@ name: firmware-ESP32 build
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
+      - feature/icsc21
 
 jobs:
   build:
