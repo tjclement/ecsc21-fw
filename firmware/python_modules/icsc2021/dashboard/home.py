@@ -123,5 +123,5 @@ def update_countdown():
     return 1000  # Run again in 1 sec
 
 
-virtualtimers.begin(1000)
+virtualtimers.begin(100)
 virtualtimers.new(0, update_countdown)
