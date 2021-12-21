@@ -52,7 +52,7 @@ const char* fontNames[] = {
 	"org01_8",                //
 	"fairlight8",             //
 	"fairlight12",            //
-	"dejavusans20",           //SHA2017
+//	"dejavusans20",           //SHA2017
 	"permanentmarker22",      //SHA2017
 	"permanentmarker36",      //SHA2017
 	"roboto_black22",         //SHA2017
@@ -60,19 +60,19 @@ const char* fontNames[] = {
 	"roboto_regular12",       //SHA2017
 	"roboto_regular18",       //SHA2017 
 	"roboto_regular22",       //SHA2017
-	"weather42",              //SHA2017
-	"pixelade13",             //SHA2017
-	"7x5",                    //CAMPZONE2019
+//	"weather42",              //SHA2017
+//	"pixelade13",             //SHA2017
+//	"7x5",                    //CAMPZONE2019
 	"ocra16",                 //CYBER
 	"ocra22",                 //CYBER
-	"exo2_regular22",         //TROOPERS
-	"exo2_thin22",            //TROOPERS
-	"exo2_bold22",            //TROOPERS
-	"exo2_regular18",         //TROOPERS
-	"exo2_thin18",            //TROOPERS
-	"exo2_bold18",            //TROOPERS
-	"exo2_regular12",         //TROOPERS
-	"exo2_thin12",            //TROOPERS
+//	"exo2_regular22",         //TROOPERS
+//	"exo2_thin22",            //TROOPERS
+//	"exo2_bold22",            //TROOPERS
+//	"exo2_regular18",         //TROOPERS
+//	"exo2_thin18",            //TROOPERS
+//	"exo2_bold18",            //TROOPERS
+//	"exo2_regular12",         //TROOPERS
+//	"exo2_thin12",            //TROOPERS
 	"exo2_bold12",            //TROOPERS
 	"alarm_clock_regular16",  //ICSC2022
 	NULL
@@ -83,7 +83,7 @@ const GFXfont* fontPointers[] = {
 	&org_01_8pt7b,
 	&fairlight_8pt7b,
 	&fairlight_12pt7b,
-	&dejavusans_20pt7b,
+//	&dejavusans_20pt7b,
 	&permanentmarker_22pt7b,
 	&permanentmarker_36pt7b,
 	&roboto_Black_22pt7b,
@@ -91,19 +91,19 @@ const GFXfont* fontPointers[] = {
 	&roboto_12pt7b,
 	&roboto_18pt7b,
 	&roboto_22pt7b,
-	&weather_42pt8b,
-	&roboto_12pt7b,
-	&ipane7x5,
+//	&weather_42pt8b,
+//	&roboto_12pt7b,
+//	&ipane7x5,
 	&ocra_16pt7b,
 	&ocra_22pt7b,
-	&Exo2_Regular_22pt7b,
-	&Exo2_Thin_22pt7b,
-	&Exo2_Bold_22pt7b,
-	&Exo2_Regular_18pt7b,
-	&Exo2_Thin_18pt7b,
-	&Exo2_Bold_18pt7b,
-	&Exo2_Regular_12pt7b,
-	&Exo2_Thin_12pt7b,
+//	&Exo2_Regular_22pt7b,
+//	&Exo2_Thin_22pt7b,
+//	&Exo2_Bold_22pt7b,
+//	&Exo2_Regular_18pt7b,
+//	&Exo2_Thin_18pt7b,
+//	&Exo2_Bold_18pt7b,
+//	&Exo2_Regular_12pt7b,
+//	&Exo2_Thin_12pt7b,
 	&Exo2_Bold_12pt7b,
 	&alarm_clock_16pt7b,
 };
