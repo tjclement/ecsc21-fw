@@ -7,9 +7,7 @@ display.orientation(270)
 
 _showing_details = False
 
-countdown_time = (
-    machine.nvs_getint("system", "countdown_time") or 28800
-)  # By default start with 8 hours countdown
+countdown_time = machine.nvs_getint("system", "countdown_time") or 28800  # By default start with 8 hours countdown
 
 _menu = List(
     0,

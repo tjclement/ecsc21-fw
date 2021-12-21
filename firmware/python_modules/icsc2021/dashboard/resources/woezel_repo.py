@@ -48,9 +48,7 @@ def update():
             slug = category["slug"]
             _showProgress("Downloading '" + category["name"] + "'...")
             f = urequests.get(
-                "https://badge.team/basket/"
-                + consts.INFO_HARDWARE_WOEZEL_NAME
-                + "/category/%s/json" % slug,
+                "https://badge.team/basket/" + consts.INFO_HARDWARE_WOEZEL_NAME + "/category/%s/json" % slug,
                 timeout=30,
             )
             f_file = open(path + "/" + slug + ".json", "w")

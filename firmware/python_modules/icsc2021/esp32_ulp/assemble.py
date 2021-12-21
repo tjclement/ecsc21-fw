@@ -33,8 +33,7 @@ class SymbolTable:
         entry = (stype, section, value)
         if symbol in self._symbols and entry != self._symbols[symbol]:
             raise Exception(
-                "redefining symbol %s with different value %r -> %r."
-                % (label, self._symbols[symbol], entry)
+                "redefining symbol %s with different value %r -> %r." % (label, self._symbols[symbol], entry)
             )
         self._symbols[symbol] = entry
 
@@ -56,10 +55,7 @@ class SymbolTable:
             print(symbol, entry)
 
     def export(self):
-        addrs_syms = [
-            (self.resolve_absolute(entry), symbol)
-            for symbol, entry in self._symbols.items()
-        ]
+        addrs_syms = [(self.resolve_absolute(entry), symbol) for symbol, entry in self._symbols.items()]
         return sorted(addrs_syms)
 
     def to_abs_addr(self, section, offset):
@@ -282,8 +278,6 @@ class Assembler:
         self.assembler_pass(lines)
         self.symbols.set_bases(self.compute_bases())
         garbage_collect("before pass2")
-        self.init(
-            2
-        )  # now we know all symbols and bases, do the real assembler pass, pass 2
+        self.init(2)  # now we know all symbols and bases, do the real assembler pass, pass 2
         self.assembler_pass(lines)
         garbage_collect("after pass2")

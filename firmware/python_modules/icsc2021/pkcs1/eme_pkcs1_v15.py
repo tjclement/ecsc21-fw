@@ -25,9 +25,7 @@ def encode(message, k, ps=None, rnd=default_crypto_random):
     ps_len = k - len(message) - 3
     if ps:
         if len(ps) != ps_len:
-            raise exceptions.WrongLength(
-                "given pseudorandom string length is wrong", len(ps), ps_len
-            )
+            raise exceptions.WrongLength("given pseudorandom string length is wrong", len(ps), ps_len)
     else:
         ps = primitives.get_nonzero_random_bytes(ps_len, rnd=rnd)
     return b"\x00\x02" + ps + b"\x00" + message

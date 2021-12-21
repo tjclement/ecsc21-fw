@@ -27,9 +27,7 @@ def decrypt(private_key, encryption):
     """
     k = private_key.byte_size
     if len(encryption) != k:
-        raise exceptions.DecryptionError(
-            "Key length does not match encrypted message length"
-        )
+        raise exceptions.DecryptionError("Key length does not match encrypted message length")
     c = primitives.os2ip(encryption)
     m = private_key.rsadp(c)
     em = primitives.i2osp(m, k)

@@ -39,11 +39,7 @@ def debug():
     for i in range(0, len(scheduler)):
         timeUntilTaskExecution = scheduler[i]["target"] - scheduler[i]["pos"]
         print(
-            "idle time for task "
-            + str(i)
-            + " = "
-            + str(timeUntilTaskExecution)
-            + " - ",
+            "idle time for task " + str(i) + " = " + str(timeUntilTaskExecution) + " - ",
             scheduler[i],
         )
 
@@ -91,11 +87,7 @@ def idle_time():
         global debugEnabled
         if debugEnabled:
             print(
-                "idle time for task "
-                + str(i)
-                + " = "
-                + str(timeUntilTaskExecution)
-                + " - ",
+                "idle time for task " + str(i) + " = " + str(timeUntilTaskExecution) + " - ",
                 scheduler[i],
             )
 

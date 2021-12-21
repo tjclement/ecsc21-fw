@@ -9,10 +9,7 @@ def create_flag(challenge, points):
     )
     import rsa, binascii
 
-    return (
-        "CTF{%s}"
-        % binascii.hexlify(rsa.encrypt(n, e, "%s,%d" % (challenge, points))).decode()
-    )
+    return "CTF{%s}" % binascii.hexlify(rsa.encrypt(n, e, "%s,%d" % (challenge, points))).decode()
 
 
 def parse_flag(flag):
@@ -109,9 +106,7 @@ def submit_flag(flag):
             import easydraw, time, system
 
             time.sleep(1)
-            easydraw.messageCentered(
-                "Congratulations!\n\n\n\n\nYou have finished all challenges!"
-            )
+            easydraw.messageCentered("Congratulations!\n\n\n\n\nYou have finished all challenges!")
             time.sleep(3)
             system.home()
     del valuestore

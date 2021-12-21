@@ -26,9 +26,7 @@ def scan():
     ssid_list.append("< Back")
     option = term.menu("WiFi setup - Select a network", ssid_list)
     if option != len(ssid_list) - 1:
-        password(
-            ssid_result[option][0].decode("utf-8", "ignore"), ssid_result[option][4]
-        )
+        password(ssid_result[option][0].decode("utf-8", "ignore"), ssid_result[option][4])
 
 
 def manual():

@@ -177,11 +177,7 @@ def generate_key_pair(
             continue
         if e is not None and primitives.egcd(e, lbda)[0] != 1:
             continue
-        if (
-            strict_size
-            and number - len(primes) == 1
-            and primitives.integer_bit_size(n * prime) != size
-        ):
+        if strict_size and number - len(primes) == 1 and primitives.integer_bit_size(n * prime) != size:
             continue
         primes.append(prime)
         n *= prime

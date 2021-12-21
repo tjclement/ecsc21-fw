@@ -8,25 +8,17 @@ def load():
     if cfg_term_menu == None:
         cfg_term_menu = True
 
-    cfg_wifi = machine.nvs_get_u8(
-        "splash", "wifi"
-    )  # Allow the use of WiFi on the splash screen
+    cfg_wifi = machine.nvs_get_u8("splash", "wifi")  # Allow the use of WiFi on the splash screen
     if cfg_wifi == None:
         cfg_wifi = False  # If not set the use of WiFi is not allowed
 
-    cfg_services = machine.nvs_get_u8(
-        "splash", "services"
-    )  # Enable splash screen services (fun but dangerous)
+    cfg_services = machine.nvs_get_u8("splash", "services")  # Enable splash screen services (fun but dangerous)
     if cfg_services == None:
         cfg_services = False  # If not set services are disabled
 
-    cfg_logo = machine.nvs_getstr(
-        "splash", "logo"
-    )  # Filename of a PNG image to show on the splash screen
+    cfg_logo = machine.nvs_getstr("splash", "logo")  # Filename of a PNG image to show on the splash screen
 
-    cfg_nickname = machine.nvs_get_u8(
-        "splash", "nickname"
-    )  # Show the nickname of the user on the splash screen
+    cfg_nickname = machine.nvs_get_u8("splash", "nickname")  # Show the nickname of the user on the splash screen
     if cfg_nickname == None:
         cfg_nickname = True  # If not set we want to show the nickname
 

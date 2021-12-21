@@ -73,9 +73,7 @@ def eraseStorage():
 
 
 def serialWarning():
-    device.showMessage(
-        "This app can only be controlled using the USB serial port!", "/media/usb.png"
-    )
+    device.showMessage("This app can only be controlled using the USB serial port!", "/media/usb.png")
 
 
 def crashedWarning():

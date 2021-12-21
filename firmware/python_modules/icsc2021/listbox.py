@@ -48,9 +48,7 @@ class List:
                 lineHeight = display.getTextHeight(" ", "exo2_bold12")
                 lines = easydraw.lineSplit(self.header, self.w, "exo2_bold12")
                 for line in lines:
-                    display.drawText(
-                        cursor[0] + 2, cursor[1], line, 0xFFFFFF, "exo2_bold12"
-                    )
+                    display.drawText(cursor[0] + 2, cursor[1], line, 0xFFFFFF, "exo2_bold12")
                     cursor = (cursor[0], cursor[1] + lineHeight)
                 cursor = (cursor[0], cursor[1] + 20)
 
@@ -61,13 +59,7 @@ class List:
                 countdown = "- %s -" % countdown
             lineHeight = display.getTextHeight(" ", "alarm_clock_regular16")
             lineWidth = display.getTextWidth(countdown, "alarm_clock_regular16")
-            centerPosition = int(
-                (
-                    display.width()
-                    - display.getTextWidth(countdown, "alarm_clock_regular16")
-                )
-                / 2
-            )
+            centerPosition = int((display.width() - display.getTextWidth(countdown, "alarm_clock_regular16")) / 2)
             display.drawText(
                 cursor[0] + centerPosition,
                 cursor[1],
@@ -92,19 +84,13 @@ class List:
                     break
                 color = 0xFFFFFF
                 if self.offset + i == self.selected:
-                    display.drawRect(
-                        self.x, cursor[1], self.w, lineHeight + 6, True, 0xFFFFFF
-                    )
+                    display.drawRect(self.x, cursor[1], self.w, lineHeight + 6, True, 0xFFFFFF)
                     color = 0x000000
                 cursor = (self.x, cursor[1] + 3)
-                display.drawText(
-                    cursor[0] + 2, cursor[1], item + "\n", color, "roboto_regular12"
-                )
+                display.drawText(cursor[0] + 2, cursor[1], item + "\n", color, "roboto_regular12")
                 cursor = (
                     self.x,
-                    cursor[1]
-                    + 3
-                    + display.getTextHeight(item + "\n", "roboto_regular12"),
+                    cursor[1] + 3 + display.getTextHeight(item + "\n", "roboto_regular12"),
                 )
 
     def add_item(self, caption):

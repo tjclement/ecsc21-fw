@@ -9,18 +9,13 @@ def print_flag():
             with open("/proc/uid", "rt") as file:
                 uid = int(file.read())
         except:
-            print(
-                "Debug: /proc/uid is corrupt: does not contain textual integer user ID."
-            )
+            print("Debug: /proc/uid is corrupt: does not contain textual integer user ID.")
             return -1
         if uid != 0:
             print("Only the root user is allowed to print the flag.")
             return -1
         else:
-            print(
-                "Congratulations, here's your flag: CTF{%s}"
-                % "6c78629ca4bb5dc3f509e3a97744ce26e3adf1740edd4b5d"
-            )
+            print("Congratulations, here's your flag: CTF{%s}" % "6c78629ca4bb5dc3f509e3a97744ce26e3adf1740edd4b5d")
         return -1
 
     print("Debug: Verifying integrity of /proc/uid..")

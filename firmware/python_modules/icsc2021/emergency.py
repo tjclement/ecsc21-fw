@@ -99,9 +99,7 @@ def draw_normal():
     word = "key" if len(available_indices) < 2 else "keys"
     display.drawFill(0x0)
     easydraw.messageCentered(
-        "Emergency Contact\n\n\n"
-        + message
-        + "\n\nYou have %s %s" % (word, ", ".join(available_indices))
+        "Emergency Contact\n\n\n" + message + "\n\nYou have %s %s" % (word, ", ".join(available_indices))
     )
     display.flush()
     print("Your saved emergency keys are: ")
@@ -111,9 +109,7 @@ def draw_normal():
 
 def draw_receive(key_index, ratio):
     display.drawFill(0x0)
-    easydraw.messageCentered(
-        "Receiving\n\n\n" + "Key %d: %.2f%%" % (key_index, ratio * 100)
-    )
+    easydraw.messageCentered("Receiving\n\n\n" + "Key %d: %.2f%%" % (key_index, ratio * 100))
     display.flush()
 
 
@@ -146,9 +142,7 @@ def ir_receive(data):
         digest = checksum.digest()[0]
         if digest == char1:
             print("Matching checksums")
-            machine.nvs_setstr(
-                "system", "received_key%d" % key_index, str(keys[key_index])
-            )
+            machine.nvs_setstr("system", "received_key%d" % key_index, str(keys[key_index]))
         else:
             print("Checksum mismatch: %d != %d" % (digest, char1))
             keys[key_index] = 0

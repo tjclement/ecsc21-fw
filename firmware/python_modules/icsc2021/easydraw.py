@@ -27,9 +27,7 @@ def msg_nosplit(message, title="Loading...", reset=False):
     lineHeight = display.getTextHeight(" ", "7x5")
 
     if len(messageHistory) < num_lines:
-        display.drawText(
-            0, 11 + (len(messageHistory) * lineHeight), message, 0xFFFFFF, "7x5"
-        )
+        display.drawText(0, 11 + (len(messageHistory) * lineHeight), message, 0xFFFFFF, "7x5")
         messageHistory.append(message)
     else:
         messageHistory.pop(0)
@@ -144,9 +142,7 @@ def nickname(y=5, font="Roboto_Regular18", color=0x000000, unusedParameter=None)
         pos_x = int((display.width() - display.getTextWidth(line, font)) / 2)
         lineHeight = display.getTextHeight(line, font)
         if font:
-            display.drawText(
-                pos_x, y + lineHeight * (len(lines) - i - 1), line, color, font
-            )
+            display.drawText(pos_x, y + lineHeight * (len(lines) - i - 1), line, color, font)
         else:
             display.drawText(pos_x, y + lineHeight * (len(lines) - i - 1), line, color)
     return len(lines) * lineHeight
@@ -158,9 +154,7 @@ def battery(on_usb, vBatt, charging):
 
 def disp_string_right_bottom(y, s, font="Roboto_Regular12"):
     l = display.getTextWidth(s, font)
-    display.drawText(
-        display.width() - l, display.height() - (y + 1) * 14, s, 0x000000, font
-    )
+    display.drawText(display.width() - l, display.height() - (y + 1) * 14, s, 0x000000, font)
 
 
 def lineSplit(message, width=None, font=version.font_default):
@@ -196,9 +190,7 @@ def lineSplit(message, width=None, font=version.font_default):
     return lines
 
 
-def text(
-    x, y, content, width=None, font="Roboto_Regular12", colour=0xFFFFFF, flush=False
-):
+def text(x, y, content, width=None, font="Roboto_Regular12", colour=0xFFFFFF, flush=False):
     lines = content.split("\n")
     lineHeight = display.getTextHeight(" ", font)
     width = width if width is not None else (display.width() - x)

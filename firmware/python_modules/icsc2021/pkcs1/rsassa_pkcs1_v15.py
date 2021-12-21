@@ -48,9 +48,7 @@ def verify(public_key, message, signature, hash_class=hashlib.sha1):
     except ValueError:
         raise exceptions.InvalidSignature
     try:
-        em_prime = emsa_pkcs1_v15.encode(
-            message, public_key.byte_size, hash_class=hash_class
-        )
+        em_prime = emsa_pkcs1_v15.encode(message, public_key.byte_size, hash_class=hash_class)
     except ValueError:
         raise exceptions.RSAModulusTooShort
     return primitives.constant_time_cmp(em, em_prime)

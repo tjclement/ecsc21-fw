@@ -23,10 +23,7 @@ def print_flag(password):
         else:
             time.sleep(0.01)
 
-    print(
-        "Correct! Here's your flag: CTF{%s}"
-        % "6f460ca38cb5fced8abeac2418b93190496de90d81c5534c"
-    )
+    print("Correct! Here's your flag: CTF{%s}" % "6f460ca38cb5fced8abeac2418b93190496de90d81c5534c")
 
 
 _message_ui = (

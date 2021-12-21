@@ -170,11 +170,7 @@ def get_pkg_metadata(name):
 
 
 def get_pkg_list():
-    f = url_open(
-        "https://{}/basket/{}/list/json".format(
-            consts.WOEZEL_WEB_SERVER, consts.INFO_HARDWARE_WOEZEL_NAME
-        )
-    )
+    f = url_open("https://{}/basket/{}/list/json".format(consts.WOEZEL_WEB_SERVER, consts.INFO_HARDWARE_WOEZEL_NAME))
     try:
         return json.load(f)
     finally:
@@ -183,9 +179,7 @@ def get_pkg_list():
 
 def search_pkg_list(query):
     f = url_open(
-        "https://{}/basket/{}/search/{}/json".format(
-            consts.WOEZEL_WEB_SERVER, consts.INFO_HARDWARE_WOEZEL_NAME, query
-        )
+        "https://{}/basket/{}/search/{}/json".format(consts.WOEZEL_WEB_SERVER, consts.INFO_HARDWARE_WOEZEL_NAME, query)
     )
     try:
         return json.load(f)
@@ -289,9 +283,7 @@ def install(to_install, install_path=None, force_reinstall=False):
                 to_install.extend(deps)
     except Exception as e:
         print(
-            "Error installing '{}': {}, packages may be partially installed".format(
-                pkg_spec, e
-            ),
+            "Error installing '{}': {}, packages may be partially installed".format(pkg_spec, e),
             file=sys.stderr,
         )
         raise e

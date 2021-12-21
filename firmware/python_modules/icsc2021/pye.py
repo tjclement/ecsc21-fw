@@ -184,11 +184,7 @@ class Editor:
                     Editor.scrbuf[c] = (False, "")
             else:
                 l = (
-                    self.mark != None
-                    and (
-                        (self.mark <= i <= self.cur_line)
-                        or (self.cur_line <= i <= self.mark)
-                    ),
+                    self.mark != None and ((self.mark <= i <= self.cur_line) or (self.cur_line <= i <= self.mark)),
                     self.content[i][self.margin : self.margin + Editor.width],
                 )
                 if l != Editor.scrbuf[c]:
@@ -220,18 +216,10 @@ class Editor:
         self.cursor(True)
 
     def spaces(self, line, pos=None):
-        return (
-            len(line) - len(line.lstrip(" "))
-            if pos == None
-            else len(line[:pos]) - len(line[:pos].rstrip(" "))
-        )
+        return len(line) - len(line.lstrip(" ")) if pos == None else len(line[:pos]) - len(line[:pos].rstrip(" "))
 
     def line_range(self):
-        return (
-            (self.mark, self.cur_line + 1)
-            if self.mark < self.cur_line
-            else (self.cur_line, self.mark + 1)
-        )
+        return (self.mark, self.cur_line + 1) if self.mark < self.cur_line else (self.cur_line, self.mark + 1)
 
     def line_edit(self, prompt, default):
         push_msg = lambda msg: self.wr(msg + "\b" * len(msg))
@@ -277,9 +265,7 @@ class Editor:
             elif key == 0x16:
                 if Editor.yank_buffer:
                     self.wr("\b" * pos + " " * len(res) + "\b" * len(res))
-                    res = Editor.yank_buffer[0].strip()[
-                        : Editor.width - len(prompt) - 2
-                    ]
+                    res = Editor.yank_buffer[0].strip()[: Editor.width - len(prompt) - 2]
                     self.wr(res)
                     pos = len(res)
             elif key == 0:
@@ -322,10 +308,7 @@ class Editor:
     def undo_add(self, lnum, text, key, span=1):
         self.changed = "*"
         if self.undo_limit > 0 and (
-            len(self.undo) == 0
-            or key == 0
-            or self.undo[-1][3] != key
-            or self.undo[-1][0] != lnum
+            len(self.undo) == 0 or key == 0 or self.undo[-1][3] != key or self.undo[-1][0] != lnum
         ):
             if len(self.undo) >= self.undo_limit:
                 del self.undo[0]
@@ -391,9 +374,7 @@ class Editor:
                 self.content[self.cur_line] = l[: self.col - 1] + l[self.col :]
                 self.col -= 1
             elif self.cur_line > 0:
-                self.undo_add(
-                    self.cur_line - 1, [self.content[self.cur_line - 1], l], 0
-                )
+                self.undo_add(self.cur_line - 1, [self.content[self.cur_line - 1], l], 0)
                 self.col = len(self.content[self.cur_line - 1])
                 self.content[self.cur_line - 1] += self.content.pop(self.cur_line)
                 self.cur_line -= 1
@@ -435,9 +416,7 @@ class Editor:
             pat = self.line_edit(
                 "Case Sensitive Search {}, Autoindent {}"
                 ", Tab Size {}, Write Tabs {}"
-                ": ".format(
-                    Editor.case, self.autoindent, self.tab_size, self.write_tabs
-                ),
+                ": ".format(Editor.case, self.autoindent, self.tab_size, self.write_tabs),
                 "",
             )
             try:
@@ -537,12 +516,7 @@ class Editor:
                 for i in range(lrange[0], lrange[1]):
                     if len(self.content[i]) > 0:
                         self.content[i] = (
-                            " "
-                            * (
-                                self.tab_size
-                                - self.spaces(self.content[i]) % self.tab_size
-                            )
-                            + self.content[i]
+                            " " * (self.tab_size - self.spaces(self.content[i]) % self.tab_size) + self.content[i]
                         )
         elif key == 0x15:
             if self.mark == None:
@@ -562,9 +536,7 @@ class Editor:
                 for i in range(lrange[0], lrange[1]):
                     ns = self.spaces(self.content[i])
                     if ns > 0:
-                        self.content[i] = self.content[i][
-                            (ns - 1) % self.tab_size + 1 :
-                        ]
+                        self.content[i] = self.content[i][(ns - 1) % self.tab_size + 1 :]
         elif key == 0x12:
             count = 0
             pat = self.line_edit("Replace: ", Editor.find_pattern)
@@ -590,9 +562,7 @@ class Editor:
                             if q == "q" or key == 0x11:
                                 break
                             elif q in ("a", "y"):
-                                self.undo_add(
-                                    self.cur_line, [self.content[self.cur_line]], 0
-                                )
+                                self.undo_add(self.cur_line, [self.content[self.cur_line]], 0)
                                 self.content[self.cur_line] = (
                                     self.content[self.cur_line][: self.col]
                                     + rpat
@@ -663,9 +633,7 @@ class Editor:
             self.message = ""
             if key == 0x11:
                 if self.changed:
-                    res = self.line_edit(
-                        "Content changed! Quit without saving (y/N)? ", "N"
-                    )
+                    res = self.line_edit("Content changed! Quit without saving (y/N)? ", "N")
                     if not res or res[0].upper() != "Y":
                         continue
                 self.scroll_region(0)
@@ -706,9 +674,7 @@ class Editor:
         if fname:
             self.fname = fname
             if fname in (".", "..") or (stat(fname)[0] & 0x4000):
-                self.content = ["Directory '{}'".format(fname), ""] + sorted(
-                    listdir(fname)
-                )
+                self.content = ["Directory '{}'".format(fname), ""] + sorted(listdir(fname))
             else:
                 if True:
                     with open(fname) as f:

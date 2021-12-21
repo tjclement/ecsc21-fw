@@ -78,9 +78,7 @@ def interpolate(points, prime):
         coefficients[i] = 1
         for j in range(1, len(points) + 1):
             if j != i:
-                coefficients[i] = (
-                    coefficients[i] * (0 - j) * inv(i - j, prime)
-                ) % prime
+                coefficients[i] = (coefficients[i] * (0 - j) * inv(i - j, prime)) % prime
 
     value = 0
     for i in range(1, len(points) + 1):

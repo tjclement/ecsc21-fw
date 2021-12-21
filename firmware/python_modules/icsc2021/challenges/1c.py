@@ -31,9 +31,7 @@ def render():
         display.drawText(
             0,
             y,
-            "{:08X}: {}\n".format(
-                _cur_address + (i * 16), data[(i * 16) : (i * 16) + 16]
-            ),
+            "{:08X}: {}\n".format(_cur_address + (i * 16), data[(i * 16) : (i * 16) + 16]),
             0xFFFFFF,
             line_font,
         )

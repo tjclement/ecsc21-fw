@@ -316,9 +316,7 @@ def arg_qualify(arg):
             reg = int(arg[1])
             if 0 <= reg <= 3:
                 return ARG(REG, reg, arg)
-            raise ValueError(
-                "arg_qualify: valid registers are r0, r1, r2, r3. Given: %s" % arg
-            )
+            raise ValueError("arg_qualify: valid registers are r0, r1, r2, r3. Given: %s" % arg)
         if arg_lower in ["--", "eq", "ov", "lt", "gt", "ge"]:
             return ARG(COND, arg_lower, arg)
     try:

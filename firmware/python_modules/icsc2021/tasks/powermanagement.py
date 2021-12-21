@@ -61,9 +61,7 @@ def pm_task():
     try:
         import voltages
 
-        usbStayAwake = voltages.usb() > 2500 and machine.nvs_get_u8(
-            "system", "usb_stay_awake"
-        )
+        usbStayAwake = voltages.usb() > 2500 and machine.nvs_get_u8("system", "usb_stay_awake")
     except:
         pass
 

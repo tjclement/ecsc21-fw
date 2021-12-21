@@ -282,21 +282,13 @@ def _draw():
     _TEXTWithCursorLines = _TEXTWithCursor.split("\n")
     _TEXTWithCursorLines.append("")
 
-    lineWithCursorLength = _display.getTextWidth(
-        _TEXTWithCursorLines[_CURSOR_Y], _FONT_TEXT
-    )
-    lineWithCursorLengthUntilCursor = _display.getTextWidth(
-        _TEXTWithCursorLines[_CURSOR_Y][:_CURSOR_X], _FONT_TEXT
-    )
+    lineWithCursorLength = _display.getTextWidth(_TEXTWithCursorLines[_CURSOR_Y], _FONT_TEXT)
+    lineWithCursorLengthUntilCursor = _display.getTextWidth(_TEXTWithCursorLines[_CURSOR_Y][:_CURSOR_X], _FONT_TEXT)
 
     if lineWithCursorLength < _display.width():
         offsetX = 0
     else:
-        offsetX = (
-            lineWithCursorLengthUntilCursor
-            + _display.getTextWidth(" ", _FONT_TEXT)
-            - _display.width() // 2
-        )
+        offsetX = lineWithCursorLengthUntilCursor + _display.getTextWidth(" ", _FONT_TEXT) - _display.width() // 2
         if offsetX < -_display.getTextWidth(" ", _FONT_TEXT):
             offsetX = -_display.getTextWidth(" ", _FONT_TEXT)
 
@@ -326,10 +318,7 @@ def _draw():
         if arrow:
             arrow1 = True
     else:
-        if (
-            _display.getTextWidth(_TEXTWithCursorLines[_VISIBLELINE], _FONT_TEXT)
-            > _display.width()
-        ):
+        if _display.getTextWidth(_TEXTWithCursorLines[_VISIBLELINE], _FONT_TEXT) > _display.width():
             arrow1 = True
     if _CURSOR_Y == _VISIBLELINE + 1:
         offsetX2 = offsetX
@@ -338,15 +327,10 @@ def _draw():
         if arrow:
             arrow2 = True
     else:
-        if (
-            _display.getTextWidth(_TEXTWithCursorLines[_VISIBLELINE + 1], _FONT_TEXT)
-            > _display.width()
-        ):
+        if _display.getTextWidth(_TEXTWithCursorLines[_VISIBLELINE + 1], _FONT_TEXT) > _display.width():
             arrow2 = True
 
-    _display.drawText(
-        -offsetX1, 17 + 0 * 13, _TEXTWithCursorLines[_VISIBLELINE], 0x000000, _FONT_TEXT
-    )
+    _display.drawText(-offsetX1, 17 + 0 * 13, _TEXTWithCursorLines[_VISIBLELINE], 0x000000, _FONT_TEXT)
     _display.drawText(
         -offsetX2,
         17 + 1 * 13,
@@ -356,27 +340,19 @@ def _draw():
     )
 
     if arrow1:
-        _display.drawRect(
-            119, 17 + 0 * 13, 9, _display.getTextHeight(" ", _FONT_TEXT), True, 0x000000
-        )
+        _display.drawRect(119, 17 + 0 * 13, 9, _display.getTextHeight(" ", _FONT_TEXT), True, 0x000000)
         _display.drawText(120, 17 + 0 * 13, ">", 0xFFFFFF, _FONT_TEXT)
 
     if arrow2:
-        _display.drawRect(
-            119, 17 + 1 * 13, 9, _display.getTextHeight(" ", _FONT_TEXT), True, 0x000000
-        )
+        _display.drawRect(119, 17 + 1 * 13, 9, _display.getTextHeight(" ", _FONT_TEXT), True, 0x000000)
         _display.drawText(120, 17 + 1 * 13, ">", 0xFFFFFF, _FONT_TEXT)
 
     if arrow1L:
-        _display.drawRect(
-            0, 17 + 0 * 13, 9, _display.getTextHeight(" ", _FONT_TEXT), True, 0x000000
-        )
+        _display.drawRect(0, 17 + 0 * 13, 9, _display.getTextHeight(" ", _FONT_TEXT), True, 0x000000)
         _display.drawText(0, 17 + 0 * 13, "<", 0xFFFFFF, _FONT_TEXT)
 
     if arrow2L:
-        _display.drawRect(
-            0, 17 + 1 * 13, 9, _display.getTextHeight(" ", _FONT_TEXT), True, 0x000000
-        )
+        _display.drawRect(0, 17 + 1 * 13, 9, _display.getTextHeight(" ", _FONT_TEXT), True, 0x000000)
         _display.drawText(0, 17 + 1 * 13, "<", 0xFFFFFF, _FONT_TEXT)
 
     _display.drawRect(0, _display.height() - 15, _display.width(), 15, True, 0x000000)
@@ -388,12 +364,8 @@ def _draw():
             if item >= len(_CHAR_MAP):
                 item = item % len(_CHAR_MAP)
             if _XPOS == item:
-                _display.drawRect(
-                    i * 14 + 1, _display.height() - 14, 14, 14, True, 0xFFFFFF
-                )
-                _display.drawRect(
-                    i * 14 + 1, _display.height() - 14, 14, 14, False, 0x000000
-                )
+                _display.drawRect(i * 14 + 1, _display.height() - 14, 14, 14, True, 0xFFFFFF)
+                _display.drawRect(i * 14 + 1, _display.height() - 14, 14, 14, False, 0x000000)
                 _display.drawText(
                     i * 14 + 1 + 3,
                     _display.height() - 14,
@@ -402,9 +374,7 @@ def _draw():
                     _FONT_KEY,
                 )
             else:
-                _display.drawRect(
-                    i * 14 + 1, _display.height() - 14, 14, 14, True, 0x000000
-                )
+                _display.drawRect(i * 14 + 1, _display.height() - 14, 14, 14, True, 0x000000)
                 _display.drawText(
                     i * 14 + 1 + 3,
                     _display.height() - 14,
@@ -413,17 +383,11 @@ def _draw():
                     _FONT_KEY,
                 )
     elif _MODE == 1:
-        _display.drawText(
-            0, _display.height() - 14, "CURSOR, A: NL, B: RM", 0xFFFFFF, _FONT_KEY
-        )
+        _display.drawText(0, _display.height() - 14, "CURSOR, A: NL, B: RM", 0xFFFFFF, _FONT_KEY)
     elif _MODE == 2:
-        _display.drawText(
-            0, _display.height() - 14, "A: OK, B: CANCEL", 0xFFFFFF, _FONT_KEY
-        )
+        _display.drawText(0, _display.height() - 14, "A: OK, B: CANCEL", 0xFFFFFF, _FONT_KEY)
     else:
-        _display.drawText(
-            0, _display.height() - 14, "Processing...", 0xFFFFFF, _FONT_KEY
-        )
+        _display.drawText(0, _display.height() - 14, "Processing...", 0xFFFFFF, _FONT_KEY)
 
     _display.flush(_display.FLAG_LUT_FASTEST)
 

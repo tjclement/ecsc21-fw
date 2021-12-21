@@ -93,9 +93,7 @@ class BadgeIr:
         machine.enable_irq(irqs)
         if hasdata and not self.rxtimer:
             self.rxtimer = machine.Timer(2)
-            self.rxtimer.init(
-                mode=machine.Timer.ONE_SHOT, period=1, callback=self.real_decoder
-            )
+            self.rxtimer.init(mode=machine.Timer.ONE_SHOT, period=1, callback=self.real_decoder)
 
     def rx_enable(self):
         if self.rxenablepin >= 0:
@@ -194,15 +192,11 @@ class NecIR(BadgeIr):
                             if bits == 32 and p1[1] == 1:
                                 self.cleanbuffer(i)
                                 if (
-                                    (decoded >> 24 & 0xFF)
-                                    == (0xFF ^ (decoded >> 16 & 0xFF))
-                                    and (decoded >> 8 & 0xFF)
-                                    == (0xFF ^ (decoded >> 0 & 0xFF))
+                                    (decoded >> 24 & 0xFF) == (0xFF ^ (decoded >> 16 & 0xFF))
+                                    and (decoded >> 8 & 0xFF) == (0xFF ^ (decoded >> 0 & 0xFF))
                                     and self.command
                                 ):
-                                    self.command(
-                                        decoded >> 24 & 0xFF, decoded >> 8 & 0xFF
-                                    )
+                                    self.command(decoded >> 24 & 0xFF, decoded >> 8 & 0xFF)
                                 return 0
                         else:
                             p2 = (val, time)
@@ -453,15 +447,11 @@ class NokiaIR(BadgeIr):
                             if bits == 32 and p1[1] == 1:
                                 self.cleanbuffer(i)
                                 if (
-                                    (decoded >> 24 & 0xFF)
-                                    == (0xFF ^ (decoded >> 16 & 0xFF))
-                                    and (decoded >> 8 & 0xFF)
-                                    == (0xFF ^ (decoded >> 0 & 0xFF))
+                                    (decoded >> 24 & 0xFF) == (0xFF ^ (decoded >> 16 & 0xFF))
+                                    and (decoded >> 8 & 0xFF) == (0xFF ^ (decoded >> 0 & 0xFF))
                                     and self.command
                                 ):
-                                    self.command(
-                                        decoded >> 24 & 0xFF, decoded >> 8 & 0xFF
-                                    )
+                                    self.command(decoded >> 24 & 0xFF, decoded >> 8 & 0xFF)
                                 return 0
                         else:
                             p2 = (val, time)

@@ -32,9 +32,7 @@ def connect(*args):
     elif len(args) == 2:
         _STA_IF.connect(args[0], args[1])
     else:
-        raise Exception(
-            "Expected either 0 (default network), 1 (ssid) or 2 (ssid, password) parameters."
-        )
+        raise Exception("Expected either 0 (default network), 1 (ssid) or 2 (ssid, password) parameters.")
 
 
 def disconnect():

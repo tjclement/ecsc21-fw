@@ -28,8 +28,6 @@ term.header(True, "Configure orientation")
 if orientation.setDefault(newValue):
     print("Default orientation changed to " + getOrientationString(newValue))
 else:
-    print(
-        "Default orientation could not be changed to " + getOrientationString(newValue)
-    )
+    print("Default orientation could not be changed to " + getOrientationString(newValue))
 time.sleep(1)
 system.home(True)
