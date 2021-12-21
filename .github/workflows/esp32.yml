@@ -18,9 +18,9 @@ jobs:
     - name: Install Linux packages
       run: sudo apt update && sudo apt install -y --no-install-recommends git wget flex bison gperf python python3 python3-pip python3-setuptools cmake ninja-build ccache libffi-dev libssl-dev libsdl2-dev  dfu-util libusb-1.0-0 libncurses5-dev libncursesw5-dev
     - name: Install Python (2) requirements for build scripts
-      run: pip2 install -r requirements
+      run: pip install -r requirements
     - name: Install Python (2) requirements for esp-idf
-      run: pip2 install --user -r esp-idf/requirements.txt
+      run: pip install --user -r esp-idf/requirements.txt
     - name: Unzip toolchain
       run: unzip -p toolchain/xtensa-esp32-elf-linux64.zip xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0.tar | tar xvf -
     - name: Build
