@@ -48,7 +48,7 @@ def _egcd(a, b):
 def _modinv(a, m):
     g, x, y = _egcd(a, m)
     if g != 1:
-        raise Exception('modular inverse does not exist')
+        raise Exception("modular inverse does not exist")
     else:
         return x % m
 
@@ -57,10 +57,10 @@ def _modinv(a, m):
 def gen_p_q(bitsize=128):
     p = 0
     while p == 0 or not _miller_rabin_is_prime(p, 40):
-        p = int(binascii.hexlify(os.urandom(bitsize//8)), 16)
+        p = int(binascii.hexlify(os.urandom(bitsize // 8)), 16)
     q = 0
     while q == 0 or not _miller_rabin_is_prime(q, 40):
-        q = int(binascii.hexlify(os.urandom(bitsize//8)), 16)
+        q = int(binascii.hexlify(os.urandom(bitsize // 8)), 16)
 
     return p, q
 
@@ -73,7 +73,7 @@ def _gen_keys_from_p_q(bitsize=128, p=None, q=None):
     e = 0
     # If e is prime, we're sure that gcd(e, phin) == 1
     while e == 0 or e >= phin or not _miller_rabin_is_prime(e, 40):
-        e = int(binascii.hexlify(os.urandom(bitsize//8)), 16)
+        e = int(binascii.hexlify(os.urandom(bitsize // 8)), 16)
     d = _modinv(e, n)
 
     return (n, e), (n, d)

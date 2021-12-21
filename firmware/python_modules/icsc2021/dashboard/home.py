@@ -2,27 +2,34 @@ import buttons, easydraw, display, machine, system, virtualtimers
 from listbox import List
 
 # Logo LED
-_pin2=machine.PWM(15, freq=40000, duty=50)
+_pin2 = machine.PWM(15, freq=40000, duty=50)
 display.orientation(270)
 
 _showing_details = False
 
-countdown_time = machine.nvs_getint('system', 'countdown_time') or 28800  # By default start with 8 hours countdown
+countdown_time = (
+    machine.nvs_getint("system", "countdown_time") or 28800
+)  # By default start with 8 hours countdown
 
-_menu = List(0, 0, display.width(), display.height(),
-             countdown_time=countdown_time,
-             header='WARNING: this device is being wiped remotely.',
-             logo='/private/system/logo_small.png')
+_menu = List(
+    0,
+    0,
+    display.width(),
+    display.height(),
+    countdown_time=countdown_time,
+    header="WARNING: this device is being wiped remotely.",
+    logo="/private/system/logo_small.png",
+)
 
 _menu_items = {
     _menu: [
-        ('Newbie CTF Entrance Exam', lambda: ""),
-        ('View found flags', lambda: system.start('showflags')),
-        ('(debug) Cheats', lambda: system.start('cheats')),
-        ('(debug) Shell', lambda: system.start('shell')),
-        ('(debug) Update firmware', lambda: system.start('force_update')),
-        ('(debug) Factory reset', lambda: system.start('reset')),
-        ('(debug) IR Test', lambda: system.start('emergency')),
+        ("Newbie CTF Entrance Exam", lambda: ""),
+        ("View found flags", lambda: system.start("showflags")),
+        ("(debug) Cheats", lambda: system.start("cheats")),
+        ("(debug) Shell", lambda: system.start("shell")),
+        ("(debug) Update firmware", lambda: system.start("force_update")),
+        ("(debug) Factory reset", lambda: system.start("reset")),
+        ("(debug) IR Test", lambda: system.start("emergency")),
     ],
 }
 
@@ -88,15 +95,17 @@ def _on_right(pressed):
         current_menu = _menu_stack[-1]
         current_menu.draw()
 
-
     display.flush()
 
 
-buttons.pushMapping({
-    buttons.BTN_UP: _on_up,
-    buttons.BTN_DOWN: _on_down,
-    buttons.BTN_LEFT: _on_left,
-    buttons.BTN_RIGHT: _on_right})
+buttons.pushMapping(
+    {
+        buttons.BTN_UP: _on_up,
+        buttons.BTN_DOWN: _on_down,
+        buttons.BTN_LEFT: _on_left,
+        buttons.BTN_RIGHT: _on_right,
+    }
+)
 
 _build_menu()
 _menu_stack[-1].draw()
@@ -108,7 +117,7 @@ def update_countdown():
 
     # Protect nvs by persisting the timer only once each 10 seconds
     if _menu.countdown_time % 10 == 0:
-        machine.nvs_setint('system', 'countdown_time', _menu.countdown_time)
+        machine.nvs_setint("system", "countdown_time", _menu.countdown_time)
 
     _menu_stack[-1].draw()
     display.flush()

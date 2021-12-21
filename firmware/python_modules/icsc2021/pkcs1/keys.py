@@ -4,8 +4,9 @@ from . import exceptions
 from .defaults import default_crypto_random
 from .primes import get_prime, DEFAULT_ITERATION
 
+
 class RsaPublicKey(object):
-    __slots__ = ('n', 'e', 'bit_size', 'byte_size')
+    __slots__ = ("n", "e", "bit_size", "byte_size")
 
     def __init__(self, n, e):
         self.n = n
@@ -13,22 +14,26 @@ class RsaPublicKey(object):
         self.bit_size = primitives.integer_bit_size(n)
         self.byte_size = primitives.integer_byte_size(n)
 
-
     def __repr__(self):
-        return '<RsaPublicKey n: %d e: %d bit_size: %d>' % (self.n, self.e, self.bit_size)
+        return "<RsaPublicKey n: %d e: %d bit_size: %d>" % (
+            self.n,
+            self.e,
+            self.bit_size,
+        )
 
     def rsavp1(self, s):
-        if not (0 <= s <= self.n-1):
+        if not (0 <= s <= self.n - 1):
             raise exceptions.SignatureRepresentativeOutOfRange
         return self.rsaep(s)
 
     def rsaep(self, m):
-        if not (0 <= m <= self.n-1):
+        if not (0 <= m <= self.n - 1):
             raise exceptions.MessageRepresentativeOutOfRange
         return primitives._pow(m, self.e, self.n)
 
+
 class RsaPrivateKey(object):
-    __slots__ = ('n', 'd', 'bit_size', 'byte_size')
+    __slots__ = ("n", "d", "bit_size", "byte_size")
 
     def __init__(self, n, d):
         self.n = n
@@ -37,20 +42,35 @@ class RsaPrivateKey(object):
         self.byte_size = primitives.integer_byte_size(n)
 
     def __repr__(self):
-        return '<RsaPrivateKey n: %d d: %d bit_size: %d>' % (self.n, self.d, self.bit_size)
+        return "<RsaPrivateKey n: %d d: %d bit_size: %d>" % (
+            self.n,
+            self.d,
+            self.bit_size,
+        )
 
     def rsadp(self, c):
-        if not (0 <= c <= self.n-1):
+        if not (0 <= c <= self.n - 1):
             raise exceptions.CiphertextRepresentativeOutOfRange
         return primitives._pow(c, self.d, self.n)
 
     def rsasp1(self, m):
-        if not (0 <= m <= self.n-1):
+        if not (0 <= m <= self.n - 1):
             raise exceptions.MessageRepresentativeOutOfRange
         return self.rsadp(m)
 
+
 class MultiPrimeRsaPrivateKey(object):
-    __slots__ = ('primes', 'blind', 'blind_inv', 'n', 'e', 'exponents', 'crts', 'bit_size', 'byte_size')
+    __slots__ = (
+        "primes",
+        "blind",
+        "blind_inv",
+        "n",
+        "e",
+        "exponents",
+        "crts",
+        "bit_size",
+        "byte_size",
+    )
 
     def __init__(self, primes, e, blind=True, rnd=default_crypto_random):
         self.primes = primes
@@ -60,10 +80,10 @@ class MultiPrimeRsaPrivateKey(object):
         self.byte_size = primitives.integer_byte_size(self.n)
         self.exponents = []
         for prime in primes:
-            exponent, a, b = primitives.bezout(e, prime-1)
+            exponent, a, b = primitives.bezout(e, prime - 1)
             assert b == 1
             if exponent < 0:
-                exponent += prime-1
+                exponent += prime - 1
             self.exponents.append(exponent)
         self.crts = [1]
         R = primes[0]
@@ -75,7 +95,7 @@ class MultiPrimeRsaPrivateKey(object):
         public = RsaPublicKey(self.n, self.e)
         if blind:
             while True:
-                blind_factor = rnd.getrandbits(self.bit_size-1)
+                blind_factor = rnd.getrandbits(self.bit_size - 1)
                 self.blind = public.rsaep(blind_factor)
                 u, v, gcd = primitives.bezout(blind_factor, self.n)
                 if gcd == 1:
@@ -86,13 +106,15 @@ class MultiPrimeRsaPrivateKey(object):
             self.blind = None
             self.blind_inv = None
 
-
     def __repr__(self):
-        return '<RsaPrivateKey n: %d primes: %s bit_size: %d>' % (self.n, self.primes, self.bit_size)
-
+        return "<RsaPrivateKey n: %d primes: %s bit_size: %d>" % (
+            self.n,
+            self.primes,
+            self.bit_size,
+        )
 
     def rsadp(self, c):
-        if not (0 <= c <= self.n-1):
+        if not (0 <= c <= self.n - 1):
             raise exceptions.CiphertextRepresentativeOutOfRange
         R = 1
         m = 0
@@ -108,33 +130,41 @@ class MultiPrimeRsaPrivateKey(object):
         return m
 
     def rsasp1(self, m):
-        if not (0 <= m <= self.n-1):
+        if not (0 <= m <= self.n - 1):
             raise exceptions.MessageRepresentativeOutOfRange
         return self.rsadp(m)
 
-def generate_key_pair(size=512, number=2, rnd=default_crypto_random, k=DEFAULT_ITERATION,
-        primality_algorithm=None, strict_size=True, e=0x10001):
-    '''Generates an RSA key pair.
 
-       size:
-           the bit size of the modulus, default to 512.
-       number:
-           the number of primes to use, default to 2.
-       rnd:
-           the random number generator to use, default to SystemRandom from the
-           random library.
-       k:
-           the number of iteration to use for the probabilistic primality
-           tests.
-       primality_algorithm:
-           the primality algorithm to use.
-       strict_size:
-           whether to use size as a lower bound or a strict goal.
-       e:
-           the public key exponent.
+def generate_key_pair(
+    size=512,
+    number=2,
+    rnd=default_crypto_random,
+    k=DEFAULT_ITERATION,
+    primality_algorithm=None,
+    strict_size=True,
+    e=0x10001,
+):
+    """Generates an RSA key pair.
 
-       Returns the pair (public_key, private_key).
-    '''
+    size:
+        the bit size of the modulus, default to 512.
+    number:
+        the number of primes to use, default to 2.
+    rnd:
+        the random number generator to use, default to SystemRandom from the
+        random library.
+    k:
+        the number of iteration to use for the probabilistic primality
+        tests.
+    primality_algorithm:
+        the primality algorithm to use.
+    strict_size:
+        whether to use size as a lower bound or a strict goal.
+    e:
+        the public key exponent.
+
+    Returns the pair (public_key, private_key).
+    """
     primes = []
     lbda = 1
     bits = size // number + 1
@@ -147,7 +177,11 @@ def generate_key_pair(size=512, number=2, rnd=default_crypto_random, k=DEFAULT_I
             continue
         if e is not None and primitives.egcd(e, lbda)[0] != 1:
             continue
-        if strict_size and number - len(primes) == 1 and primitives.integer_bit_size(n*prime) != size:
+        if (
+            strict_size
+            and number - len(primes) == 1
+            and primitives.integer_bit_size(n * prime) != size
+        ):
             continue
         primes.append(prime)
         n *= prime
@@ -158,7 +192,7 @@ def generate_key_pair(size=512, number=2, rnd=default_crypto_random, k=DEFAULT_I
             if primitives.egcd(e, lbda)[0] == 1:
                 break
             e += 2
-    assert 3 <= e <= n-1
+    assert 3 <= e <= n - 1
     d = primitives.modinv(e, lbda)
     public = RsaPublicKey(n, e)
     # private = MultiPrimeRsaPrivateKey(primes, e, blind=True, rnd=rnd)

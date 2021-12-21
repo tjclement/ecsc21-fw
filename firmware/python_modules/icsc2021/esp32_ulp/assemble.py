@@ -6,7 +6,7 @@ from . import opcodes
 from .nocomment import remove_comments
 from .util import garbage_collect
 
-TEXT, DATA, BSS = 'text', 'data', 'bss'
+TEXT, DATA, BSS = "text", "data", "bss"
 
 REL, ABS = 0, 1
 
@@ -32,12 +32,15 @@ class SymbolTable:
     def set_sym(self, symbol, stype, section, value):
         entry = (stype, section, value)
         if symbol in self._symbols and entry != self._symbols[symbol]:
-            raise Exception('redefining symbol %s with different value %r -> %r.' % (label, self._symbols[symbol], entry))
+            raise Exception(
+                "redefining symbol %s with different value %r -> %r."
+                % (label, self._symbols[symbol], entry)
+            )
         self._symbols[symbol] = entry
 
     def has_sym(self, symbol):
         return symbol in self._symbols
-        
+
     def get_sym(self, symbol):
         try:
             entry = self._symbols[symbol]
@@ -53,7 +56,10 @@ class SymbolTable:
             print(symbol, entry)
 
     def export(self):
-        addrs_syms = [(self.resolve_absolute(entry), symbol) for symbol, entry in self._symbols.items()]
+        addrs_syms = [
+            (self.resolve_absolute(entry), symbol)
+            for symbol, entry in self._symbols.items()
+        ]
         return sorted(addrs_syms)
 
     def to_abs_addr(self, section, offset):
@@ -95,7 +101,6 @@ class SymbolTable:
 
 
 class Assembler:
-
     def __init__(self, symbols=None, bases=None):
         self.symbols = SymbolTable(symbols or {}, bases or {})
         opcodes.symbols = self.symbols  # XXX dirty hack
@@ -118,14 +123,14 @@ class Assembler:
         """
         if not line:
             return
-        has_label = line[0] not in '\t '
+        has_label = line[0] not in "\t "
         if has_label:
             label_line = line.split(None, 1)
             if len(label_line) == 2:
                 label, line = label_line
             else:  # 1
                 label, line = label_line[0], None
-            label = label.rstrip(':')
+            label = label.rstrip(":")
         else:
             label, line = None, line.lstrip()
         if line is None:
@@ -134,21 +139,19 @@ class Assembler:
             opcode_args = line.split(None, 1)
             if len(opcode_args) == 2:
                 opcode, args = opcode_args
-                args = tuple(arg.strip() for arg in args.split(','))
+                args = tuple(arg.strip() for arg in args.split(","))
             else:  # 1
                 opcode, args = opcode_args[0], ()
         return label, opcode, args
-
 
     def parse(self, lines):
         parsed = [self.parse_line(line) for line in lines]
         return [p for p in parsed if p is not None]
 
-
     def append_section(self, value, expected_section=None):
         s = self.section
         if expected_section is not None and s is not expected_section:
-            raise TypeError('only allowed in %s section' % expected_section)
+            raise TypeError("only allowed in %s section" % expected_section)
         if s is BSS:
             # just increase BSS size by value
             self.offsets[s] += value
@@ -159,11 +162,13 @@ class Assembler:
     def finalize_sections(self):
         # make sure all sections have a bytelength dividable by 4,
         # thus having all sections aligned at 32bit-word boundaries.
-        for s in list(self.sections.keys()) + [BSS, ]:
+        for s in list(self.sections.keys()) + [
+            BSS,
+        ]:
             offs = self.offsets[s]
             mod = offs % 4
             if mod:
-                fill = int(0).to_bytes(4 - mod, 'little')
+                fill = int(0).to_bytes(4 - mod, "little")
                 self.offsets[s] += len(fill)
                 if s is not BSS:
                     self.sections[s].append(fill)
@@ -182,18 +187,18 @@ class Assembler:
         self.symbols.dump()
         print("%s section:" % TEXT)
         for t in self.sections[TEXT]:
-            print("%08x" % int.from_bytes(t, 'little'))
+            print("%08x" % int.from_bytes(t, "little"))
         print("size: %d" % self.offsets[TEXT])
         print("%s section:" % DATA)
         for d in self.sections[DATA]:
-            print("%08x" % int.from_bytes(d, 'little'))
+            print("%08x" % int.from_bytes(d, "little"))
         print("size: %d" % self.offsets[DATA])
         print("%s section:" % BSS)
         print("size: %d" % self.offsets[BSS])
 
     def fetch(self):
         def get_bytes(section):
-            return b''.join(self.sections[section])
+            return b"".join(self.sections[section])
 
         return get_bytes(TEXT), get_bytes(DATA), self.offsets[BSS]
 
@@ -208,10 +213,10 @@ class Assembler:
 
     def fill(self, section, amount, fill_byte):
         if fill_byte is not None and section is BSS:
-            raise ValueError('fill in bss section not allowed')
+            raise ValueError("fill in bss section not allowed")
         if section is TEXT:  # TODO: text section should be filled with NOPs
-            raise ValueError('fill/skip/align in text section not supported')
-        fill = int(fill_byte or 0).to_bytes(1, 'little') * amount
+            raise ValueError("fill/skip/align in text section not supported")
+        fill = int(fill_byte or 0).to_bytes(1, "little") * amount
         self.offsets[section] += len(fill)
         if section is not BSS:
             self.sections[section].append(fill)
@@ -235,8 +240,8 @@ class Assembler:
         self.symbols.set_sym(symbol, ABS, None, value)
 
     def append_data(self, wordlen, args):
-        data = [int(arg).to_bytes(wordlen, 'little') for arg in args]
-        self.append_section(b''.join(data))
+        data = [int(arg).to_bytes(wordlen, "little") for arg in args]
+        self.append_section(b"".join(data))
 
     def d_byte(self, *args):
         self.append_data(1, args)
@@ -253,9 +258,9 @@ class Assembler:
             if label is not None:
                 self.symbols.set_sym(label, REL, *self.symbols.get_from())
             if opcode is not None:
-                if opcode[0] == '.':
+                if opcode[0] == ".":
                     # assembler directive
-                    func = getattr(self, 'd_' + opcode[1:])
+                    func = getattr(self, "d_" + opcode[1:])
                     if func is not None:
                         result = func(*args)
                         if result is not None:
@@ -263,12 +268,12 @@ class Assembler:
                         continue
                 else:
                     # machine instruction
-                    func = getattr(opcodes, 'i_' + opcode, None)
+                    func = getattr(opcodes, "i_" + opcode, None)
                     if func is not None:
                         instruction = func(*args)
-                        self.append_section(instruction.to_bytes(4, 'little'), TEXT)
+                        self.append_section(instruction.to_bytes(4, "little"), TEXT)
                         continue
-                raise Exception('Unknown opcode or directive: %s' % opcode)
+                raise Exception("Unknown opcode or directive: %s" % opcode)
         self.finalize_sections()
 
     def assemble(self, text):
@@ -276,8 +281,9 @@ class Assembler:
         self.init(1)  # pass 1 is only to get the symbol table right
         self.assembler_pass(lines)
         self.symbols.set_bases(self.compute_bases())
-        garbage_collect('before pass2')
-        self.init(2)  # now we know all symbols and bases, do the real assembler pass, pass 2
+        garbage_collect("before pass2")
+        self.init(
+            2
+        )  # now we know all symbols and bases, do the real assembler pass, pass 2
         self.assembler_pass(lines)
-        garbage_collect('after pass2')
-
+        garbage_collect("after pass2")

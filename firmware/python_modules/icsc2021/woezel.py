@@ -6,6 +6,7 @@ import ujson as json
 import uzlib
 import upip_utarfile as tarfile
 import consts
+
 gc.collect()
 
 debug = False
@@ -15,11 +16,14 @@ gzdict_sz = 16 + 15
 
 file_buf = bytearray(512)
 
+
 class NotFoundError(Exception):
     pass
 
+
 class LatestInstalledError(Exception):
     pass
+
 
 def op_split(path):
     if path == "":
@@ -32,8 +36,10 @@ def op_split(path):
         head = "/"
     return (head, r[1])
 
+
 def op_basename(path):
     return op_split(path)[1]
+
 
 # Expects *file* name
 def _makedirs(name, mode=0o777):
@@ -65,26 +71,27 @@ def save_file(fname, subf):
                 break
             outf.write(file_buf, sz)
 
+
 def install_tar(f, prefix):
     meta = {}
     for info in f:
-        #print(info)
+        # print(info)
         fname = info.name
         try:
-            fname = fname[fname.index("/") + 1:]
+            fname = fname[fname.index("/") + 1 :]
         except ValueError:
             fname = ""
 
         save = True
         for p in ("setup.", "PKG-INFO", "README"):
-                #print(fname, p)
-                if fname.startswith(p) or ".egg-info" in fname:
-                    if fname.endswith("/requires.txt"):
-                        meta["deps"] = f.extractfile(info).read()
-                    save = False
-                    if debug:
-                        print("Skipping", fname)
-                    break
+            # print(fname, p)
+            if fname.startswith(p) or ".egg-info" in fname:
+                if fname.endswith("/requires.txt"):
+                    meta["deps"] = f.extractfile(info).read()
+                save = False
+                if debug:
+                    print("Skipping", fname)
+                break
 
         if save:
             outfname = prefix + fname
@@ -96,34 +103,38 @@ def install_tar(f, prefix):
                 save_file(outfname, subf)
     return meta
 
+
 def expandhome(s):
     if "~/" in s:
         h = os.getenv("HOME")
         s = s.replace("~/", h + "/")
     return s
 
+
 import ussl
 import usocket
+
+
 def url_open(url):
     if debug:
         print(url)
-    
+
     # Enforce Letsencrypt certificate checking
     ussl.verify_letsencrypt(True)
 
-    proto, _, host, urlpath = url.split('/', 3)
+    proto, _, host, urlpath = url.split("/", 3)
     try:
         ai = usocket.getaddrinfo(host, 443)
     except OSError as e:
         fatal("Unable to resolve %s (no Internet?)" % host, e)
-    #print("Address infos:", ai)
+    # print("Address infos:", ai)
     if len(ai) == 0:
         fatal("Unable to resolve %s (no Internet?)" % host, errno.EHOSTUNREACH)
     addr = ai[0][4]
 
     s = usocket.socket(ai[0][0])
     try:
-        #print("Connect address:", addr)
+        # print("Connect address:", addr)
         s.connect(addr)
 
         if proto == "https:":
@@ -141,7 +152,7 @@ def url_open(url):
             l = s.readline()
             if not l:
                 raise ValueError("Unexpected EOF in HTTP headers")
-            if l == b'\r\n':
+            if l == b"\r\n":
                 break
     except Exception as e:
         s.close()
@@ -157,25 +168,37 @@ def get_pkg_metadata(name):
     finally:
         f.close()
 
+
 def get_pkg_list():
-    f = url_open("https://{}/basket/{}/list/json".format(consts.WOEZEL_WEB_SERVER, consts.INFO_HARDWARE_WOEZEL_NAME))
+    f = url_open(
+        "https://{}/basket/{}/list/json".format(
+            consts.WOEZEL_WEB_SERVER, consts.INFO_HARDWARE_WOEZEL_NAME
+        )
+    )
     try:
         return json.load(f)
     finally:
         f.close()
 
+
 def search_pkg_list(query):
-    f = url_open("https://{}/basket/{}/search/{}/json".format(consts.WOEZEL_WEB_SERVER, consts.INFO_HARDWARE_WOEZEL_NAME, query))
+    f = url_open(
+        "https://{}/basket/{}/search/{}/json".format(
+            consts.WOEZEL_WEB_SERVER, consts.INFO_HARDWARE_WOEZEL_NAME, query
+        )
+    )
     try:
         return json.load(f)
     finally:
         f.close()
+
 
 def fatal(msg, exc=None):
     print("Error:", msg)
     if exc and debug:
         raise exc
     sys.exit(1)
+
 
 def install_pkg(pkg_spec, install_path, force_reinstall):
     data = get_pkg_metadata(pkg_spec)
@@ -230,6 +253,7 @@ def install_pkg(pkg_spec, install_path, force_reinstall):
     gc.collect()
     return meta
 
+
 def install(to_install, install_path=None, force_reinstall=False):
     # Calculate gzip dictionary size to use
     global gzdict_sz
@@ -264,10 +288,14 @@ def install(to_install, install_path=None, force_reinstall=False):
                 deps = deps.decode("utf-8").split("\n")
                 to_install.extend(deps)
     except Exception as e:
-        print("Error installing '{}': {}, packages may be partially installed".format(
-                pkg_spec, e),
-            file=sys.stderr)
+        print(
+            "Error installing '{}': {}, packages may be partially installed".format(
+                pkg_spec, e
+            ),
+            file=sys.stderr,
+        )
         raise e
+
 
 def display_pkg(packages):
     for package in packages:
@@ -284,6 +312,7 @@ def search(query="*"):
         packages = search_pkg_list(query)
     display_pkg(packages)
 
+
 def get_install_path():
     global install_path
     if install_path is None:
@@ -292,12 +321,14 @@ def get_install_path():
     install_path = expandhome(install_path)
     return install_path
 
+
 def cleanup():
     for fname in cleanup_files:
         try:
             os.unlink(fname)
         except OSError:
             print("Warning: Cannot delete " + fname)
+
 
 def main():
     global debug

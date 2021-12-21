@@ -73,15 +73,15 @@ def make_ins_struct_def(layout):
     pos = 0  # bitfield definitions start from lsb
     struct_def = {}
     for line in lines:
-        bitfield = line.split('#', 1)[0]  # get rid of comment
-        name, width = bitfield.split(':', 1)
+        bitfield = line.split("#", 1)[0]  # get rid of comment
+        name, width = bitfield.split(":", 1)
         name = name.strip()
         width = int(width.strip())
         struct_def[name] = BFUINT32 | pos << BF_POS | width << BF_LEN
         pos += width
     if pos != 32:
-        raise ValueError('make_ins: bit field widths must sum up to 32. [%s]' % layout)
-    struct_def['all'] = UINT32
+        raise ValueError("make_ins: bit field widths must sum up to 32. [%s]" % layout)
+    struct_def["all"] = UINT32
     return struct_def
 
 
@@ -96,27 +96,32 @@ def make_ins(layout):
 
 # instruction structure definitions
 
-_wr_reg = make_ins("""
+_wr_reg = make_ins(
+    """
     addr : 8        # Address within either RTC_CNTL, RTC_IO, or SARADC
     periph_sel : 2  # Select peripheral: RTC_CNTL (0), RTC_IO(1), SARADC(2)
     data : 8        # 8 bits of data to write
     low : 5         # Low bit
     high : 5        # High bit
     opcode : 4      # Opcode (OPCODE_WR_REG)
-""")
+"""
+)
 
 
-_rd_reg = make_ins("""
+_rd_reg = make_ins(
+    """
     addr : 8        # Address within either RTC_CNTL, RTC_IO, or SARADC
     periph_sel : 2  # Select peripheral: RTC_CNTL (0), RTC_IO(1), SARADC(2)
     unused : 8      # Unused
     low : 5         # Low bit
     high : 5        # High bit
     opcode : 4      # Opcode (OPCODE_WR_REG)
-""")
+"""
+)
 
 
-_i2c = make_ins("""
+_i2c = make_ins(
+    """
     sub_addr : 8    # address within I2C slave
     data : 8        # Data to write (not used for read)
     low : 3         # low bit
@@ -125,25 +130,31 @@ _i2c = make_ins("""
     unused : 1      # Unused
     rw : 1          # Write (1) or read (0)
     opcode : 4      # Opcode (OPCODE_I2C)
-""")
+"""
+)
 
 
-_delay = make_ins("""
+_delay = make_ins(
+    """
     cycles : 16     # Number of cycles to sleep
     unused : 12     # Unused
     opcode : 4      # Opcode (OPCODE_DELAY)
-""")
+"""
+)
 
 
-_tsens = make_ins("""
+_tsens = make_ins(
+    """
     dreg : 2        # Register where to store TSENS result
     delay : 14      # Number of cycles needed to obtain a measurement
     unused : 12     # Unused
     opcode : 4      # Opcode (OPCODE_TSENS)
-""")
+"""
+)
 
 
-_adc = make_ins("""
+_adc = make_ins(
+    """
     dreg : 2        # Register where to store ADC result
     mux : 4         # Select SARADC pad (mux + 1)
     sar_sel : 1     # Select SARADC0 (0) or SARADC1 (1)
@@ -151,10 +162,12 @@ _adc = make_ins("""
     cycles : 16     # TBD, cycles used for measurement
     unused2 : 4     # Unused
     opcode: 4       # Opcode (OPCODE_ADC)
-""")
+"""
+)
 
 
-_st = make_ins("""
+_st = make_ins(
+    """
     sreg : 2        # Register which contains data to store
     dreg : 2        # Register which contains address in RTC memory (expressed in words)
     unused1 : 6     # Unused
@@ -162,10 +175,12 @@ _st = make_ins("""
     unused2 : 4     # Unused
     sub_opcode : 3  # Sub opcode (SUB_OPCODE_ST)
     opcode : 4      # Opcode (OPCODE_ST)
-""")
+"""
+)
 
 
-_alu_reg = make_ins("""
+_alu_reg = make_ins(
+    """
     dreg : 2        # Destination register
     sreg : 2        # Register with operand A
     treg : 2        # Register with operand B
@@ -173,10 +188,12 @@ _alu_reg = make_ins("""
     sel : 4         # Operation to perform, one of ALU_SEL_xxx
     sub_opcode : 3  # Sub opcode (SUB_OPCODE_ALU_REG)
     opcode : 4      # Opcode (OPCODE_ALU)
-""")
+"""
+)
 
 
-_alu_imm = make_ins("""
+_alu_imm = make_ins(
+    """
     dreg : 2        # Destination register
     sreg : 2        # Register with operand A
     imm : 16        # Immediate value of operand B
@@ -184,20 +201,24 @@ _alu_imm = make_ins("""
     sel : 4         # Operation to perform, one of ALU_SEL_xxx
     sub_opcode : 3  # Sub opcode (SUB_OPCODE_ALU_IMM)
     opcode : 4      # Opcode (OPCODE_ALU)
-""")
+"""
+)
 
 
-_alu_cnt = make_ins("""
+_alu_cnt = make_ins(
+    """
     unused1 : 4     # Unused
     imm : 8         # Immediate value (to inc / dec stage counter)
     unused2 : 9     # Unused
     sel : 4         # Operation to perform, one of ALU_SEL_xxx
     sub_opcode : 3  # Sub opcode (SUB_OPCODE_ALU_CNT)
     opcode : 4      # Opcode (OPCODE_ALU)
-""")
+"""
+)
 
 
-_bx = make_ins("""
+_bx = make_ins(
+    """
     dreg : 2        # Register which contains target PC, expressed in words (used if .reg == 1)
     addr : 11       # Target PC, expressed in words (used if .reg == 0)
     unused : 8      # Unused
@@ -205,20 +226,24 @@ _bx = make_ins("""
     type : 3        # Jump condition (BX_JUMP_TYPE_xxx)
     sub_opcode : 3  # Sub opcode (SUB_OPCODE_BX)
     opcode : 4      # Opcode (OPCODE_BRANCH)
-""")
+"""
+)
 
 
-_b = make_ins("""
+_b = make_ins(
+    """
     imm : 16        # Immediate value to compare against
     cmp : 1         # Comparison to perform: B_CMP_L or B_CMP_GE
     offset : 7      # Absolute value of target PC offset w.r.t. current PC, expressed in words
     sign : 1        # Sign of target PC offset: 0: positive, 1: negative
     sub_opcode : 3  # Sub opcode (SUB_OPCODE_B)
     opcode : 4      # Opcode (OPCODE_BRANCH)
-""")
+"""
+)
 
 
-_bc = make_ins("""
+_bc = make_ins(
+    """
     imm : 8         # Immediate value to compare against
     unused : 7      # Unused
     cmp : 2         # Comparison to perform: BC_CMP_LT, GT or EQ
@@ -226,45 +251,54 @@ _bc = make_ins("""
     sign : 1        # Sign of target PC offset: 0: positive, 1: negative
     sub_opcode : 3  # Sub opcode (SUB_OPCODE_BC)
     opcode : 4      # Opcode (OPCODE_BRANCH)
-""")
+"""
+)
 
 
-_end = make_ins("""
+_end = make_ins(
+    """
     wakeup : 1      # Set to 1 to wake up chip
     unused : 24     # Unused
     sub_opcode : 3  # Sub opcode (SUB_OPCODE_END)
     opcode : 4      # Opcode (OPCODE_END)
-""")
+"""
+)
 
 
-_sleep = make_ins("""
+_sleep = make_ins(
+    """
     cycle_sel : 4   # Select which one of SARADC_ULP_CP_SLEEP_CYCx_REG to get the sleep duration from
     unused : 21     # Unused
     sub_opcode : 3  # Sub opcode (SUB_OPCODE_SLEEP)
     opcode : 4      # Opcode (OPCODE_END)
-""")
+"""
+)
 
 
-_halt = make_ins("""
+_halt = make_ins(
+    """
     unused : 28     # Unused
     opcode : 4      # Opcode (OPCODE_HALT)
-""")
+"""
+)
 
 
-_ld = make_ins("""
+_ld = make_ins(
+    """
     dreg : 2        # Register where the data should be loaded to
     sreg : 2        # Register which contains address in RTC memory (expressed in words)
     unused1 : 6     # Unused
     offset : 11     # Offset to add to sreg
     unused2 : 7     # Unused
     opcode : 4      # Opcode (OPCODE_LD)
-""")
+"""
+)
 
 
 # assembler opcode definitions
 
 REG, IMM, COND, SYM = 0, 1, 2, 3
-ARG = namedtuple('ARG', ('type', 'value', 'raw'))
+ARG = namedtuple("ARG", ("type", "value", "raw"))
 
 
 def arg_qualify(arg):
@@ -278,12 +312,14 @@ def arg_qualify(arg):
     """
     arg_lower = arg.lower()
     if len(arg) == 2:
-        if arg_lower[0] == 'r' and arg[1] in '0123456789':
+        if arg_lower[0] == "r" and arg[1] in "0123456789":
             reg = int(arg[1])
             if 0 <= reg <= 3:
                 return ARG(REG, reg, arg)
-            raise ValueError('arg_qualify: valid registers are r0, r1, r2, r3. Given: %s' % arg)
-        if arg_lower in ['--', 'eq', 'ov', 'lt', 'gt', 'ge']:
+            raise ValueError(
+                "arg_qualify: valid registers are r0, r1, r2, r3. Given: %s" % arg
+            )
+        if arg_lower in ["--", "eq", "ov", "lt", "gt", "ge"]:
             return ARG(COND, arg_lower, arg)
     try:
         return ARG(IMM, int(arg), arg)
@@ -298,7 +334,7 @@ def get_reg(arg):
         arg = arg_qualify(arg)
     if arg.type == REG:
         return arg.value
-    raise TypeError('wanted: register, got: %s' % arg.raw)
+    raise TypeError("wanted: register, got: %s" % arg.raw)
 
 
 def get_imm(arg):
@@ -308,7 +344,7 @@ def get_imm(arg):
         return arg.value
     if arg.type == SYM:
         return symbols.resolve_absolute(arg.value)
-    raise TypeError('wanted: immediate, got: %s' % arg.raw)
+    raise TypeError("wanted: immediate, got: %s" % arg.raw)
 
 
 get_abs = get_imm
@@ -321,7 +357,7 @@ def get_rel(arg):
         return arg.value
     if arg.type == SYM:
         return symbols.resolve_relative(arg.value)
-    raise TypeError('wanted: immediate, got: %s' % arg.raw)
+    raise TypeError("wanted: immediate, got: %s" % arg.raw)
 
 
 def get_cond(arg):
@@ -329,7 +365,7 @@ def get_cond(arg):
         arg = arg_qualify(arg)
     if arg.type == COND:
         return arg.value
-    raise TypeError('wanted: condition, got: %s' % arg.raw)
+    raise TypeError("wanted: condition, got: %s" % arg.raw)
 
 
 def _soc_reg_to_ulp_periph_sel(reg):
@@ -352,7 +388,7 @@ def _soc_reg_to_ulp_periph_sel(reg):
 
 def i_reg_wr(reg, high_bit, low_bit, val):
     reg = get_imm(reg)
-    _wr_reg.addr = (reg & 0xff) >> 2
+    _wr_reg.addr = (reg & 0xFF) >> 2
     _wr_reg.periph_sel = _soc_reg_to_ulp_periph_sel(reg)
     _wr_reg.data = get_imm(val)
     _wr_reg.low = get_imm(low_bit)
@@ -363,7 +399,7 @@ def i_reg_wr(reg, high_bit, low_bit, val):
 
 def i_reg_rd(reg, high_bit, low_bit):
     reg = get_imm(reg)
-    _rd_reg.addr = (reg & 0xff) >> 2
+    _rd_reg.addr = (reg & 0xFF) >> 2
     _rd_reg.periph_sel = _soc_reg_to_ulp_periph_sel(reg)
     _rd_reg.unused = 0
     _rd_reg.low = get_imm(low_bit)
@@ -478,7 +514,7 @@ def i_move(reg_dest, reg_imm_src):
         _alu_imm.sub_opcode = SUB_OPCODE_ALU_IMM
         _alu_imm.opcode = OPCODE_ALU
         return _alu_imm.all
-    raise TypeError('unsupported operand: %s' % src.raw)
+    raise TypeError("unsupported operand: %s" % src.raw)
 
 
 def _alu3(reg_dest, reg_src1, reg_imm_src2, alu_sel):
@@ -506,7 +542,7 @@ def _alu3(reg_dest, reg_src1, reg_imm_src2, alu_sel):
         _alu_imm.sub_opcode = SUB_OPCODE_ALU_IMM
         _alu_imm.opcode = OPCODE_ALU
         return _alu_imm.all
-    raise TypeError('unsupported operand: %s' % src2.raw)
+    raise TypeError("unsupported operand: %s" % src2.raw)
 
 
 def i_add(reg_dest, reg_src1, reg_imm_src2):
@@ -556,7 +592,7 @@ def i_stage_dec(imm):
 
 
 def i_stage_rst():
-    return _alu_stage('0', ALU_SEL_RST)
+    return _alu_stage("0", ALU_SEL_RST)
 
 
 def i_wake():
@@ -575,14 +611,14 @@ def i_sleep(timer_idx):
     return _sleep.all
 
 
-def i_jump(target, condition='--'):
+def i_jump(target, condition="--"):
     target = arg_qualify(target)
     condition = get_cond(condition)
-    if condition == 'eq':
+    if condition == "eq":
         jump_type = BX_JUMP_TYPE_ZERO
-    elif condition == 'ov':
+    elif condition == "ov":
         jump_type = BX_JUMP_TYPE_OVF
-    elif condition == '--':  # means unconditional
+    elif condition == "--":  # means unconditional
         jump_type = BX_JUMP_TYPE_DIRECT
     else:
         raise ValueError("invalid flags condition")
@@ -604,16 +640,16 @@ def i_jump(target, condition='--'):
         _bx.sub_opcode = SUB_OPCODE_BX
         _bx.opcode = OPCODE_BRANCH
         return _bx.all
-    raise TypeError('unsupported operand: %s' % target.raw)
+    raise TypeError("unsupported operand: %s" % target.raw)
 
 
 def i_jumpr(offset, threshold, condition):
     offset = get_rel(offset)
     threshold = get_imm(threshold)
     condition = get_cond(condition)
-    if condition == 'lt':
+    if condition == "lt":
         cmp_op = B_CMP_L
-    elif condition == 'ge':
+    elif condition == "ge":
         cmp_op = B_CMP_GE
     else:
         raise ValueError("invalid comparison condition")
@@ -630,11 +666,11 @@ def i_jumps(offset, threshold, condition):
     offset = get_rel(offset)
     threshold = get_imm(threshold)
     condition = get_cond(condition)
-    if condition == 'lt':
+    if condition == "lt":
         cmp_op = BC_CMP_LT
-    elif condition == 'gt':
+    elif condition == "gt":
         cmp_op = BC_CMP_GT
-    elif condition == 'eq':
+    elif condition == "eq":
         cmp_op = BC_CMP_EQ
     else:
         raise ValueError("invalid comparison condition")
