@@ -52,8 +52,8 @@ def request(method, url, data=None, json=None, headers={}, stream=None, timeout=
     addr = ai[0][-1]
     s = usocket.socket()
     if timeout:
-	s.settimeout(timeout)
-    s.connect(addr)
+        s.settimeout(timeout)
+        s.connect(addr)
     if proto == "https:":
         s = ussl.wrap_socket(s, server_hostname=host)
     s.write(b"%s /%s HTTP/1.0\r\n" % (method, path))
