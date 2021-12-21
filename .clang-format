@@ -1,5 +1,6 @@
 ﻿---
 BasedOnStyle: Chromium
+IndentWidth: 4
 AlignConsecutiveAssignments: 'true'
 # VSCode currently doesnt support AlignConsecutiveMacros, if you get errors with code formatting comment this option
 AlignConsecutiveMacros: 'true' 
@@ -8,7 +9,7 @@ AllowShortBlocksOnASingleLine: 'false'
 AllowShortFunctionsOnASingleLine: Empty
 BinPackArguments: true
 BinPackParameters: true
-ColumnLimit: 100
+ColumnLimit: 120
 Language: Cpp
 PointerAlignment: Right
 ReflowComments: 'true'
