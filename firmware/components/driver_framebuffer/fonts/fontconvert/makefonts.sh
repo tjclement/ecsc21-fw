@@ -14,7 +14,13 @@
 
 cd input
 
-convert=../fontconvert
+# Use pre-compiled fontconvert per platform
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+	convert=../fontconvert_linux
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+	convert=../fontconvert_macos
+fi
+
 header=../fontheader
 inpath=
 outpath=../../font_
