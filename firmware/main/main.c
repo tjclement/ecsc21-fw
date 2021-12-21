@@ -8,6 +8,9 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
+#include "esp_err.h"
+#include "esp_partition.h"
+#include "esp_spi_flash.h"
 #include "nvs_flash.h"
 #include "nvs.h"
 
@@ -26,6 +29,34 @@ void nvs_write_zip_status(bool status) {
     if (res != ESP_OK) {
         printf("NVS seems unusable! Please erase flash and try flashing again. (2)\n");
         halt();
+    }
+}
+
+void set_1e_access_permission_bits() {
+    printf("INFO: setting 1e permission bits.\n");
+
+    const esp_partition_t *custom1 = esp_partition_find_first(0x40, 0x0, "custom1");
+    if (custom1 == NULL) {
+        printf("ERROR: custom1 partition is missing!\n");
+        return;
+    }
+
+    if (esp_partition_erase_range(custom1, 0x0, 0x1000) != ESP_OK) {
+        printf("WARNING: custom1 erase failed. Still continuing with the write.\n");
+    }
+
+    uint8_t data[4] = {0};
+    if (esp_partition_write(custom1, 0x0FFC, data, 4) != ESP_OK) {
+        printf("ERROR: custom1 write failed. Permission bits for challenge 1e potentially not set!\n");
+    }
+
+    if (esp_partition_read(custom1, 0x0FFC, data, 4) != ESP_OK) {
+        printf("WARNING: custom1 read failed. Couldn't check for permission bits.\n");
+        return;
+    }
+
+    if(*((uint32_t*)data) != 0) {
+        printf("ERROR: custom1 4 bytes at 0x0FFC != 0.\n");
     }
 }
 
@@ -52,6 +83,10 @@ void app_main() {
         } else {
             nvs_write_zip_status(true);
         }
+
+        // Set access bits in custom1 partition to 0x0 for challenge 1e of ICSC
+        set_1e_access_permission_bits();
+
         esp_restart();
     }
 
