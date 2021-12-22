@@ -39,6 +39,10 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_3(efuse_read_block_obj, efuse_read_block_);
 
 STATIC const mp_rom_map_elem_t efuse_module_globals_table[] = {
     {MP_ROM_QSTR(MP_QSTR_read_block), MP_ROM_PTR(&efuse_read_block_obj)},
+    {MP_ROM_QSTR(MP_QSTR_EFUSE_BLK0), MP_ROM_INT(EFUSE_BLK0) },
+    {MP_ROM_QSTR(MP_QSTR_EFUSE_BLK1), MP_ROM_INT(EFUSE_BLK1) },
+    {MP_ROM_QSTR(MP_QSTR_EFUSE_BLK2), MP_ROM_INT(EFUSE_BLK2) },
+    {MP_ROM_QSTR(MP_QSTR_EFUSE_BLK3), MP_ROM_INT(EFUSE_BLK3) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(efuse_module_globals, efuse_module_globals_table);
