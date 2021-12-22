@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "esp_efuse.h"
+#include "backported_efuse.h"
 #include "esp_efuse_utility.h"
-#include "soc/efuse_reg.h"
+#include "backported_efuse_reg.h"
 #include "assert.h"
 #include "sdkconfig.h"
-#include "esp_efuse_table.h"
+#include "backported_efuse_table.h"
 
 const static char *TAG = "efuse";
 

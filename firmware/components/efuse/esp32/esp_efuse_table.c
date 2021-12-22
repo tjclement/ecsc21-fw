@@ -13,9 +13,9 @@
 // limitations under the License
 
 #include "sdkconfig.h"
-#include "esp_efuse.h"
+#include "backported_efuse.h"
 #include <assert.h>
-#include "esp_efuse_table.h"
+#include "backported_efuse_table.h"
 
 // md5_digest_table 11b691b6fa8546a3862a7a876be5f758
 // This file was generated from the file esp_efuse_table.csv. DO NOT CHANGE THIS FILE MANUALLY.

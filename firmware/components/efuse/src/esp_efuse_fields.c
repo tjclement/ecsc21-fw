@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "esp_efuse.h"
+#include "backported_efuse.h"
 #include "esp_efuse_utility.h"
-#include "esp_efuse_table.h"
+#include "backported_efuse_table.h"
 #include "stdlib.h"
 #include "esp_types.h"
 #include "rom/efuse.h"
 #include "assert.h"
 #include "esp_err.h"
 #include "esp_log.h"
-#include "soc/efuse_reg.h"
+#include "backported_efuse_reg.h"
 #include "bootloader_random.h"
 #include "soc/apb_ctrl_reg.h"
 

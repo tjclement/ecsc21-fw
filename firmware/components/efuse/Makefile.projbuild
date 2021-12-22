@@ -9,8 +9,8 @@ GEN_EFUSE_TABLE_ARG := --max_blk_len $(CONFIG_EFUSE_MAX_BLK_LEN)
 
 
 ###################
-# Make common files esp_efuse_table.c and include/esp_efuse_table.h files.
-SOC_NAME := $(IDF_TARGET)
+# Make common files esp_efuse_table.c and include/backported_efuse_table.h files.
+SOC_NAME := "esp32"
 EFUSE_COMMON_TABLE_CSV_PATH := $(COMPONENT_PATH)/$(SOC_NAME)/esp_efuse_table.csv
 
 efuse_common_table:

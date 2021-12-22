@@ -232,7 +232,7 @@ class FuseTable(list):
     def to_c_file(self, file_name, debug):
         rows = [copyright]
         rows += ['#include "sdkconfig.h"',
-                 '#include "esp_efuse.h"',
+                 '#include "backported_efuse.h"',
                  '#include <assert.h>',
                  '#include "' + file_name + '.h"',
                  "",

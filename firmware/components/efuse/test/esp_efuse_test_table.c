@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License
 
-#include "esp_efuse.h"
+#include "backported_efuse.h"
 #include "esp_efuse_test_table.h"
 
 // md5_digest_table 7d587827a6f6134241dce7d3713b3edc

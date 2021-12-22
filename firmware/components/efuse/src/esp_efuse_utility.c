@@ -14,7 +14,7 @@
 
 #include "esp_efuse_utility.h"
 
-#include "soc/efuse_reg.h"
+#include "backported_efuse_reg.h"
 #include "esp_clk.h"
 #include "esp_log.h"
 #include "assert.h"

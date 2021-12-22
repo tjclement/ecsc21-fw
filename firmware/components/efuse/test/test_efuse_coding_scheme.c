@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include <strings.h>
-#include "esp_efuse.h"
+#include "backported_efuse.h"
 #include "../src/esp_efuse_utility.h"
-#include "soc/efuse_reg.h"
+#include "backported_efuse_reg.h"
 #include "unity.h"
 #include "bootloader_random.h"
 

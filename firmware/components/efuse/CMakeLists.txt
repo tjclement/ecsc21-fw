@@ -1,4 +1,4 @@
-set(SOC_NAME ${IDF_TARGET})
+set(SOC_NAME "esp32")
 
 if(EXISTS "${COMPONENT_PATH}/${SOC_NAME}")
     include(${COMPONENT_PATH}/${SOC_NAME}/sources.cmake)
@@ -19,7 +19,7 @@ register_component()
 set(GEN_EFUSE_TABLE_ARG --max_blk_len ${CONFIG_EFUSE_MAX_BLK_LEN})
 
 ###################
-# Make common files esp_efuse_table.c and include/esp_efuse_table.h files.
+# Make common files esp_efuse_table.c and include/backported_efuse_table.h files.
 set(EFUSE_COMMON_TABLE_CSV_PATH "${COMPONENT_PATH}/${SOC_NAME}/esp_efuse_table.csv")
 
 add_custom_target(efuse_common_table COMMAND "${PYTHON}" "${CMAKE_CURRENT_SOURCE_DIR}/efuse_table_gen.py" ${EFUSE_COMMON_TABLE_CSV_PATH} ${GEN_EFUSE_TABLE_ARG})

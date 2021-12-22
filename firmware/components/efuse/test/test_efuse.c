@@ -6,8 +6,8 @@
 #include "unity.h"
 #include "esp_log.h"
 #include <string.h>
-#include "esp_efuse.h"
-#include "esp_efuse_table.h"
+#include "backported_efuse.h"
+#include "backported_efuse_table.h"
 #include "../src/esp_efuse_utility.h"
 #include "esp_efuse_test_table.h"
 #include "rom/efuse.h"

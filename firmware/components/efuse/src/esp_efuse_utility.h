@@ -22,7 +22,7 @@ extern "C" {
 #include <string.h>
 #include "esp_types.h"
 #include "esp_err.h"
-#include "esp_efuse.h"
+#include "backported_efuse.h"
 
 /**
  * @brief This is type of function that will handle the efuse field register.
