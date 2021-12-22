@@ -202,8 +202,7 @@ def solve(program):
             same = False
             break
     if same:
-        # TODO: Add the actual flag
-        flag = 'CTF{%s}' % '<FLAG_HERE>'
+        flag = 'CTF{%s}' % '771bce26ac7b238bbb6220cd795501d2f547a3ba1ca235f1'
         print('Sequence pass! Here is the flag: %s' % flag)
         flags.submit_flag(flag)
     else:
