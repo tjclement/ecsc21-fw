@@ -90,8 +90,7 @@ def submit_token(token: str):
     decrypted = unpad(cipher.decrypt(ciphertext)) or ''
 
     if decrypted == b'{user:"root"}':
-        # TODO: add the actual flag
-        flag = 'CTF{%s}' % 'FLAG_HERE'
+        flag = 'CTF{%s}' % '368edff21a67bdb9ebdf9e400b82a27fff806a8e8fbd369b'
         print('Access authorized! Here\'s your flag: %s' % flag)
         flags.submit_flag(flag)
     else:
