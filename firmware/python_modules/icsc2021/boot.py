@@ -17,8 +17,7 @@ orientation.default()
 del orientation, display
 
 __chk_recovery = False
-# fc_level = machine.nvs_getint("system", 'factory_checked') or 0
-fc_level = 4
+fc_level = machine.nvs_getint("system", 'factory_checked') or 0
 
 # Application starting
 app = rtc.read_string()
