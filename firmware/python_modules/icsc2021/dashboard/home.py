@@ -24,13 +24,13 @@ found_flags = flags.get_found_flags()
 _menu_items = {
     _menu: [
         ("View found flags", None, None, lambda: system.start("showflags")),
-        ("You shall not pass", "1a" in found_flags, 100, lambda: None),
-        ("Insane in the membrain", "1b" in found_flags, 200, lambda: None),
-        ("Got root?", "1c" in found_flags, 200, lambda: None),
-        ("RTFM", "1d" in found_flags, 300, lambda: None),
-        ("Wear and tear", "1e" in found_flags, 300, lambda: None),
-        ("Awesome ASM", "1f" in found_flags, 300, lambda: None),
-        ("Eccentric exfiltration", "1g" in found_flags, 700, lambda: None),
+        ("You shall not pass", "1a" in found_flags, 100, lambda: system.start("challenges.1a")),
+        ("Insane in the membrain", "1b" in found_flags, 200, lambda: system.start("challenges.1b")),
+        ("Got root?", "1c" in found_flags, 200, lambda: system.start("challenges.1c")),
+        ("RTFM", "1d" in found_flags, 300, lambda: system.start("challenges.1d")),
+        ("Wear and tear", "1e" in found_flags, 300, lambda: system.start("challenges.1e")),
+        ("Awesome ASM", "1f" in found_flags, 300, lambda: system.start("challenges.1f")),
+        ("Eccentric exfiltration", "1g" in found_flags, 700, lambda: system.start("challenges.1g")),
     ],
 }
 
