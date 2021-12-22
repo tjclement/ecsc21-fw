@@ -496,6 +496,10 @@ extern const struct _mp_obj_module_t pca9555_module;
 #define BUILTIN_MODULE_PCA9555
 #endif
 
+// For ICSC22
+extern const struct _mp_obj_module_t scratch_module;
+#define BUILTIN_MODULE_SCRATCH { MP_OBJ_NEW_QSTR(MP_QSTR_scratch), (mp_obj_t)&scratch_module },
+
 #if MICROPY_PY_UCRYPTOLIB
 #define BUILTIN_MODULE_UCRYPTOLIB { MP_OBJ_NEW_QSTR(MP_QSTR_ucryptolib), (mp_obj_t)&mp_module_ucryptolib },
 #else
@@ -535,7 +539,8 @@ extern const struct _mp_obj_module_t pca9555_module;
 	BUILTIN_MODULE_AM2320 \
 	BUILTIN_MODULE_RMT \
 	BUILTIN_MODULE_PCA9555 \
-	{ MP_OBJ_NEW_QSTR(MP_QSTR_espnow), (mp_obj_t)&espnow_module }, \
+	BUILTIN_MODULE_SCRATCH \
+        { MP_OBJ_NEW_QSTR(MP_QSTR_espnow), (mp_obj_t)&espnow_module }, \
 
 #define MICROPY_PORT_BUILTIN_MODULE_WEAK_LINKS \
     { MP_OBJ_NEW_QSTR(MP_QSTR_binascii), (mp_obj_t)&mp_module_ubinascii }, \
