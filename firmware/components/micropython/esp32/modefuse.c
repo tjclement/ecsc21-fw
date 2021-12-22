@@ -22,9 +22,17 @@ STATIC mp_obj_t efuse_read_block_(mp_obj_t _block, mp_obj_t _offset, mp_obj_t _l
 		mp_raise_msg(&mp_type_ValueError, "Invalid bit offset");
 	}
 
-	if (length < 0 || length > 255 || offset + length > 255) {
+	if (length < 0 || length > 256) {
 		mp_raise_msg(&mp_type_ValueError, "Invalid amount of bits to read");
 	}
+
+	if (offset + length > 256) {
+		mp_raise_msg(&mp_type_ValueError, "Cannot read outside of block");
+	}
+
+	if (length % 8 != 0) {
+        mp_raise_msg(&mp_type_ValueError, "Number of bits to read should be multiple of 8");
+    }
 
 	vstr_t vstr;
 	vstr_init_len(&vstr, length/8);
