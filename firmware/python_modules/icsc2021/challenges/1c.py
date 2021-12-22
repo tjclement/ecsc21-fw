@@ -110,6 +110,6 @@ _message_console = 'NOTICE: this system uses the Secure Access Token (SAT) mecha
         'by calling submit_token(token="xxxx").'
 
 display.drawFill(0x0)
-easydraw.messageCentered('Got root?\n\n\n' + _message_ui + '\n' * 15)
+easydraw.messageCentered('Got root?\n\n\n' + _message_ui + '\n' * 13)
 
 print(_message_console)
