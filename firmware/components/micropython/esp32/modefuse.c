@@ -38,7 +38,7 @@ STATIC mp_obj_t efuse_read_block_(mp_obj_t _block, mp_obj_t _offset, mp_obj_t _l
 STATIC MP_DEFINE_CONST_FUN_OBJ_3(efuse_read_block_obj, efuse_read_block_);
 
 STATIC const mp_rom_map_elem_t efuse_module_globals_table[] = {
-    {MP_ROM_QSTR(MP_QSTR_read), MP_ROM_PTR(&efuse_read_block_obj)},
+    {MP_ROM_QSTR(MP_QSTR_read_block), MP_ROM_PTR(&efuse_read_block_obj)},
 };
 
 STATIC MP_DEFINE_CONST_DICT(efuse_module_globals, efuse_module_globals_table);
