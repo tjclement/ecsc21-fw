@@ -14,34 +14,34 @@ STATIC mp_obj_t efuse_read_block_(mp_obj_t _block, mp_obj_t _offset, mp_obj_t _l
     int offset = mp_obj_get_int(_offset);
     int length  = mp_obj_get_int(_length);
 
-	if (block < 0 || block > 3) {
-		mp_raise_msg(&mp_type_ValueError, "Invalid efuse block");
-	}
+    if (block < 0 || block > 3) {
+        mp_raise_msg(&mp_type_ValueError, "Invalid efuse block");
+    }
 
-	if (offset < 0 || offset > 255) {
-		mp_raise_msg(&mp_type_ValueError, "Invalid bit offset");
-	}
+    if (offset < 0 || offset > 255) {
+        mp_raise_msg(&mp_type_ValueError, "Invalid bit offset");
+    }
 
-	if (length < 0 || length > 256) {
-		mp_raise_msg(&mp_type_ValueError, "Invalid amount of bits to read");
-	}
+    if (length < 0 || length > 256) {
+        mp_raise_msg(&mp_type_ValueError, "Invalid amount of bits to read");
+    }
 
-	if (offset + length > 256) {
-		mp_raise_msg(&mp_type_ValueError, "Cannot read outside of block");
-	}
+    if (offset + length > 256) {
+        mp_raise_msg(&mp_type_ValueError, "Cannot read outside of block");
+    }
 
-	if (length % 8 != 0) {
+    if (length % 8 != 0) {
         mp_raise_msg(&mp_type_ValueError, "Number of bits to read should be multiple of 8");
     }
 
-	vstr_t vstr;
-	vstr_init_len(&vstr, length/8);
+    vstr_t vstr;
+    vstr_init_len(&vstr, length/8);
 
     if (esp_efuse_read_block(block, (uint8_t *) vstr.buf, offset, length) != ESP_OK) {
-		mp_raise_OSError(MP_EIO);
+        mp_raise_OSError(MP_EIO);
     }
 
-	return mp_obj_new_str_from_vstr(&mp_type_bytes, &vstr);
+    return mp_obj_new_str_from_vstr(&mp_type_bytes, &vstr);
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_3(efuse_read_block_obj, efuse_read_block_);
 
