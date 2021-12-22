@@ -18,7 +18,10 @@ static esp_partition_t *custom1 = NULL;
 STATIC mp_obj_t scratch_read_(mp_obj_t _offset, mp_obj_t _length) {
     int offset = mp_obj_get_int(_offset);
     int length  = mp_obj_get_int(_length);
-    uint32_t aligned_offset = offset & 0xFFFFF000; // Aligned to 4k page boundary
+
+    // ESP-IDF v3.2 hardfaults when reading fewer than 16 bytes,
+    // so we need to read 16 at minimum and chop off the extra later
+    int extra_length = length < 16 ? 16-length : 0;
 
     if (offset < 0 || offset > 4*FLASH_PAGE_SIZE) {
         mp_raise_msg(&mp_type_ValueError, "offset out of range");
@@ -39,11 +42,16 @@ STATIC mp_obj_t scratch_read_(mp_obj_t _offset, mp_obj_t _length) {
     }
 
     vstr_t vstr;
-    vstr_init_len(&vstr, length);
+    vstr_init_len(&vstr, length + extra_length);
 
-    if (esp_partition_read(custom1, offset, (void*)vstr.buf, length) != ESP_OK) {
+    if (esp_partition_read(custom1, offset, (void*)vstr.buf, length + extra_length) != ESP_OK) {
         mp_raise_msg(&mp_type_OSError, "failed to read from scratch partition");
         return mp_const_none;
+    }
+
+    // Chop off extra read bytes if < 16 bytes were requested
+    if (extra_length) {
+        vstr_cut_tail_bytes(&vstr, extra_length);
     }
 
     return mp_obj_new_str_from_vstr(&mp_type_bytes, &vstr);
