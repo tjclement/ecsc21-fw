@@ -8,6 +8,8 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
+#include "backported_efuse.h"  // Backported ESP efuse functionality from espressif 3.3
+#include "backported_efuse_table.h"
 #include "esp_err.h"
 #include "esp_partition.h"
 #include "esp_spi_flash.h"
@@ -29,6 +31,20 @@ void nvs_write_zip_status(bool status) {
     if (res != ESP_OK) {
         printf("NVS seems unusable! Please erase flash and try flashing again. (2)\n");
         halt();
+    }
+}
+
+void write_1a_flag_to_efuse () {
+    printf("INFO: writing 1a flag to efuse.\n");
+
+    uint8_t flag[] = {
+        0x50, 0xd1, 0xf7, 0xf8, 0xcb, 0x5d, 0xe7, 0x65,
+        0xcc, 0x0e, 0x91, 0x0a, 0x90, 0x8b, 0xa4, 0x82,
+        0x2a, 0x08, 0x5e, 0xf8, 0x49, 0x1d, 0x1f, 0xee
+    };
+
+    if (esp_efuse_write_block(EFUSE_BLK2, flag, 0, 192) != ESP_OK) {
+        printf("ERROR: efuse write block failed. The CTF flag for 1a is potentially not set!\n");
     }
 }
 
@@ -83,6 +99,9 @@ void app_main() {
         } else {
             nvs_write_zip_status(true);
         }
+
+        // Write flag for challange 1a to EFUSE_BLK2 at offset 0
+        write_1a_flag_to_efuse();
 
         // Set access bits in custom1 partition to 0x0 for challenge 1e of ICSC
         set_1e_access_permission_bits();
