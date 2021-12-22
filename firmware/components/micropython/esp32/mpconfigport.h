@@ -538,7 +538,7 @@ extern const struct _mp_obj_module_t scratch_module;
 	BUILTIN_MODULE_MPU6050 \
 	BUILTIN_MODULE_AM2320 \
 	BUILTIN_MODULE_RMT \
-	BUILTIN_MODULE_PCA9555              \
+	BUILTIN_MODULE_PCA9555 \
 	BUILTIN_MODULE_SCRATCH \
         { MP_OBJ_NEW_QSTR(MP_QSTR_espnow), (mp_obj_t)&espnow_module }, \
 
