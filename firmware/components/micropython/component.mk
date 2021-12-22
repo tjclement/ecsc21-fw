@@ -294,6 +294,10 @@ endif
 # For ICSC22
 SRC_C += esp32/modscratch.c
 
+# For ICSC22
+MP_EXTRA_INC += -I$(PROJECT_PATH)/components/efuse/esp32/include
+SRC_C += esp32/modefuse.c
+
 EXTMOD_SRC_C = $(addprefix extmod/,\
 	modbtree.c \
 	moducryptolib.c \
