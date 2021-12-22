@@ -1,71 +1,114 @@
-import system, display, flash, gc, buttons, easydraw, flags
+import display, easydraw, flags
 
-_cur_address = 0x310000
+def generate_token(user: str):
+    import ucryptolib
+    import uos
+    import ubinascii as ub
 
+    KEY = b'\x24\xf0\x7f\xb9\x62\x76\x84\xf4\x05\xa8\x70\xf0\x90\x5b\x66\x0d'
+    MODE_CBC = 2
+    BLOCK_SIZE = 16
 
-def render():
-    gc.collect()
-    hex_text = ""
-    num_lines = 16
-    num_bytes = num_lines * 16
-    data = flash.read(_cur_address, num_bytes)
+    def pad(s: bytes):
+        rem = BLOCK_SIZE - (len(s) % BLOCK_SIZE)
 
-    # Replace unprintable characters
-    for index, char in enumerate(data):
-        if char < 0x20 or char >= 0x7F:
-            data[index] = ord(".")
-    data = bytes(data).decode("ascii")
+        if rem == 0:
+            rem = BLOCK_SIZE
 
-    y = 130
-    title_font = "roboto_regular12"
-    line_font = "7x5"
-    title_height = display.getTextHeight(" ", title_font)
-    line_height = display.getTextHeight(" ", line_font)
-    # display.drawRect(0, y, display.width(), title_height + 4, True, 0xFFFFFF)
-    # display.drawText(0, y, 'Flash contents:', 0x000000, title_font)
+        return s + ((rem).to_bytes(1, 'big') * rem)
 
-    y += title_height + 4 + 8
-    display.drawRect(0, y, display.width(), display.height() - y, True, 0x0)
-
-    for i in range(num_lines):
-        display.drawText(
-            0,
-            y,
-            "{:08X}: {}\n".format(_cur_address + (i * 16), data[(i * 16) : (i * 16) + 16]),
-            0xFFFFFF,
-            line_font,
-        )
-        y += line_height + 2
-
-    display.flush(display.FLAG_LUT_FASTEST)
-
-
-def on_up(pressed):
-    global _cur_address
-    if not pressed:
+    if not user or not isinstance(user, str):
+        print('Invalid user: name must be a non-empty string')
         return
-    _cur_address = max(0x310000, _cur_address - (16 * 16))
-    render()
 
-
-def on_down(pressed):
-    global _cur_address
-    if not pressed:
+    if len(user) > 16:
+        print('Invalid user: length cannot be more than 16 characters!')
         return
-    _cur_address = min((4 * 1024 * 1024) - (16 * 16), _cur_address + (16 * 16))
-    render()
+
+    if 'root' in user.lower():
+        print('Illegal user: user %s is not allowed!' % user)
+        return
+
+    token = '{user:"%s"}' % user
+    token = token.encode()
+
+    iv = uos.urandom(16)
+    cipher = ucryptolib.aes(KEY, MODE_CBC, iv)
+
+    encrypted = iv + cipher.encrypt(pad(token))
+    encrypted = ub.hexlify(encrypted)
+    encrypted = encrypted.decode()
+
+    print('Secure token: %s' % encrypted)
 
 
-buttons.assign(buttons.BTN_UP, on_up)
-buttons.assign(buttons.BTN_DOWN, on_down)
+def submit_token(token: str):
+    import ucryptolib
+    import ubinascii as ub
 
-_message_ui = (
-    "Extract the flag from flash storage. Use the device, or connect via usb "
-    "and use flash.read(<address>, <length>). You can paste snippets using CTRL+E and CTRL+D.\n\n"
-    + 'You can submit the flag by calling flags.submit_flag("CTF{xxxx}").'
-)
+    BLOCK_SIZE = 16
+    MAX_BLOCKS_TOKEN = 6
+    MIN_BLOCKS_TOKEN = 2
+    MAX_LEN_TOKEN = 2 * BLOCK_SIZE * MAX_BLOCKS_TOKEN 
+    MIN_LEN_TOKEN = 2 * BLOCK_SIZE * MIN_BLOCKS_TOKEN
+
+    KEY = b'\x24\xf0\x7f\xb9\x62\x76\x84\xf4\x05\xa8\x70\xf0\x90\x5b\x66\x0d'
+    MODE_CBC = 2
+
+    def unpad(s):
+        padlen = s[-1]
+        slen = len(s)
+        if padlen > slen:
+            return None
+        for i in range(padlen):
+            if s[slen - i - 1] != padlen:
+                return None
+        return s[:-padlen]
+
+    if not isinstance(token, str):
+        print('Invalid secure token: must be a string')
+        return
+
+    token_len = len(token)
+
+    if token_len < MIN_LEN_TOKEN or token_len % (BLOCK_SIZE * 2) != 0:
+        print('Invalid secure token')
+        return
+
+    if len(token) > MAX_LEN_TOKEN:
+        print('Invalid secure token: longer than the maximum (%d) allowed!' % MAX_LEN_TOKEN)
+        return
+
+    try:
+        token = ub.unhexlify(token)
+    except:
+        print('Invalid secure token: must be hex-encoded!')
+        return
+
+    iv, ciphertext = token[:16], token[16:]
+    cipher = ucryptolib.aes(KEY, MODE_CBC, iv)
+    decrypted = unpad(cipher.decrypt(ciphertext)) or ''
+
+    if decrypted == b'{user:"root"}':
+        flag = 'CTF{%s}' % 'FLAG_HERE'
+        print('Access authorized! Here\'s your flag: %s' % flag)
+        flags.submit_flag(flag)
+    else:
+        print('Unauthorized access attempt with token: %s' % decrypted)
+
+_message_ui = 'You may only continue if you are root.\n' + \
+        'Please read the instructions in your console and '+ \
+        'provide a valid token to gain access to the flag.\n\n' + \
+        'You can paste snippets using CTRL+E and CTRL+D.\n\n'+ \
+        'You can submit the flag by calling flags.submit_flag("CTF{xxxx}").'
+
+_message_console = 'NOTICE: this system uses the Secure Access Token (SAT) mechanism' + \
+        'which is based on the military-grade AES-CBC encryption scheme.\n' + \
+        'You may get a guest access token by calling generate_token(user="username").\n' + \
+        'In order to gain access to the flag, please provide a token proving that you are root\n' + \
+        'by calling submit_token(token="xxxx").'
 
 display.drawFill(0x0)
-easydraw.messageCentered("Security through Obscurity\n\n\n" + _message_ui + "\n" * 15)
+easydraw.messageCentered('Got root?\n\n\n' + _message_ui + '\n' * 15)
 
-render()
+print(_message_console)
