@@ -29,7 +29,7 @@ STATIC mp_obj_t efuse_read_block_(mp_obj_t _block, mp_obj_t _offset, mp_obj_t _l
 	vstr_t vstr;
 	vstr_init_len(&vstr, length/8);
 
-    if (esp_efuse_read_block(EFUSE_BLK2, (uint8_t *) vstr.buf, 0, 192) != ESP_OK) {
+    if (esp_efuse_read_block(block, (uint8_t *) vstr.buf, offset, length) != ESP_OK) {
 		mp_raise_OSError(MP_EIO);
     }
 
