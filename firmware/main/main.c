@@ -34,7 +34,7 @@ void nvs_write_zip_status(bool status) {
     }
 }
 
-void write_1a_flag_to_efuse () {
+void write_1a_flag_to_efuse() {
     printf("INFO: writing 1a flag to efuse.\n");
 
     uint8_t flag[] = {
@@ -46,6 +46,13 @@ void write_1a_flag_to_efuse () {
     if (esp_efuse_write_block(EFUSE_BLK2, flag, 0, 192) != ESP_OK) {
         printf("ERROR: efuse write block failed. The CTF flag for 1a is potentially not set!\n");
     }
+}
+
+void set_1d_flag_in_rtc_mem() {
+    const char* flag = "CTF{5b37698be4993691588502823f7d54966634f144aada030e}";
+
+    char* target = 0x3FF80000;
+    memcpy(target, flag, strlen(flag));
 }
 
 void set_1e_access_permission_bits() {
@@ -108,6 +115,9 @@ void app_main() {
 
         esp_restart();
     }
+
+    // Write flag for 1d to RTC_FAST memory at offset 0
+    set_1d_flag_in_rtc_mem();
 
     int magic = get_magic();
 
