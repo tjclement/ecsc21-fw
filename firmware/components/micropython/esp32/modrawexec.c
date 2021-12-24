@@ -8,6 +8,9 @@
 
 typedef int (*printf_ptr) (const char *str, ...);
 typedef void (*assembly_ptr) (const char *str, printf_ptr);
+typedef void (*simple_ptr) ();
+
+static IRAM_ATTR uint8_t *assembly;
 
 
 STATIC mp_obj_t rawexec_call_(mp_obj_t _text, mp_obj_t _assembly) {
@@ -15,15 +18,15 @@ STATIC mp_obj_t rawexec_call_(mp_obj_t _text, mp_obj_t _assembly) {
     const char *text = (char *) mp_obj_str_get_data(_text, &text_len);
 
     mp_uint_t assembly_len;
-    uint8_t *assembly = (uint8_t *) mp_obj_str_get_data(_assembly, &assembly_len);
+    assembly = (uint8_t *) mp_obj_str_get_data(_assembly, &assembly_len);
 
     bool is_bytes = MP_OBJ_IS_TYPE(_assembly, &mp_type_bytes);
     if (!is_bytes) {
         mp_raise_msg(&mp_type_AttributeError, "Assembly should be a bytestring");
     }
 
-    assembly_ptr call_assembly = &assembly;
-    call_assembly(text, printf);
+    simple_ptr call_assembly = &assembly;
+    call_assembly();
 
     return mp_const_none;
 }
