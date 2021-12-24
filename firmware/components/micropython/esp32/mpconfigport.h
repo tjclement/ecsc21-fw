@@ -504,6 +504,10 @@ extern const struct _mp_obj_module_t scratch_module;
 extern const struct _mp_obj_module_t efuse_module;
 #define BUILTIN_MODULE_EFUSE { MP_OBJ_NEW_QSTR(MP_QSTR_efuse), (mp_obj_t)&efuse_module },
 
+// For ICSC22
+extern const struct _mp_obj_module_t rawexec_module;
+#define BUILTIN_MODULE_RAWEXEC { MP_OBJ_NEW_QSTR(MP_QSTR_rawexec), (mp_obj_t)&rawexec_module },
+
 #if MICROPY_PY_UCRYPTOLIB
 #define BUILTIN_MODULE_UCRYPTOLIB { MP_OBJ_NEW_QSTR(MP_QSTR_ucryptolib), (mp_obj_t)&mp_module_ucryptolib },
 #else
@@ -545,6 +549,7 @@ extern const struct _mp_obj_module_t efuse_module;
 	BUILTIN_MODULE_PCA9555 \
 	BUILTIN_MODULE_SCRATCH \
 	BUILTIN_MODULE_EFUSE \
+	BUILTIN_MODULE_RAWEXEC \
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_espnow), (mp_obj_t)&espnow_module }, \
 
 #define MICROPY_PORT_BUILTIN_MODULE_WEAK_LINKS \
