@@ -31,11 +31,11 @@ def remove_comments(s):
         # assemble a line from characters, try to get rid of trailing and
         # most of leading whitespace (keep/put one tab for indented lines).
         nonlocal line
-        line = "".join(line)
-        is_indented = line.startswith(" ") or line.startswith("\t")
+        line = ''.join(line)
+        is_indented = line.startswith(' ') or line.startswith('\t')
         line = line.strip()
         if line and is_indented:
-            line = "\t" + line
+            line = '\t' + line
         lines.append(line)
         line = []
 
@@ -44,16 +44,16 @@ def remove_comments(s):
     length = len(s)
     while i < length:
         c = s[i]
-        cn = s[i + 1] if i + 1 < length else "\0"
+        cn = s[i + 1] if i + 1 < length else '\0'
         if state == SRC:
-            if c == "#":  # starting to-EOL comment
+            if c == '#':  # starting to-EOL comment
                 state = CHASH
                 i += 1
-            elif c == "/":
-                if cn == "/":  # starting to-EOL comment
+            elif c == '/':
+                if cn == '/':  # starting to-EOL comment
                     state = CSLASHSLASH
                     i += 2
-                elif cn == "*":  # starting a /* comment
+                elif cn == '*':  # starting a /* comment
                     state = CSLASHSTAR
                     i += 2
                 else:
@@ -67,24 +67,24 @@ def remove_comments(s):
                 state = SSTR
                 i += 1
                 line.append(c)
-            elif c == "\n":
+            elif c == '\n':
                 i += 1
                 finish_line()
             else:
                 i += 1
                 line.append(c)
         elif state == CHASH or state == CSLASHSLASH:
-            if c != "\n":  # comment runs until EOL
+            if c != '\n':  # comment runs until EOL
                 i += 1
             else:
                 state = SRC
                 i += 1
                 finish_line()
         elif state == CSLASHSTAR:
-            if c == "*" and cn == "/":  # ending a comment */
+            if c == '*' and cn == '/':  # ending a comment */
                 state = SRC
                 i += 2
-            elif c == "\n":
+            elif c == '\n':
                 i += 1
                 finish_line()
             else:
@@ -96,7 +96,7 @@ def remove_comments(s):
         elif state == DSTR or state == SSTR:
             i += 1
             line.append(c)
-            if c == "\\":  # escaping backslash
+            if c == '\\':  # escaping backslash
                 i += 1  # do not look at char after the backslash
                 line.append(cn)
         else:
@@ -107,13 +107,13 @@ def remove_comments(s):
     return lines
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import sys
-
     filename = sys.argv[1]
     with open(filename, "r") as f:
         text = f.read()
     lines = remove_comments(text)
     with open(filename + ".nocomments", "w") as f:
         for line in lines:
-            f.write(line + "\n")
+            f.write(line + '\n')
+
