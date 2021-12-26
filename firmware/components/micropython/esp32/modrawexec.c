@@ -26,12 +26,15 @@ STATIC mp_obj_t rawexec_call_(mp_obj_t _text, mp_obj_t _assembly) {
     // aligned in memory.
     uint8_t* aligned_assembly = assembly;
     while(aligned_assembly % 4 !== 0) {
-      aligned_assembly++;
+        aligned_assembly++;
     }
 
     mp_uint_t assembly_len;
     uint8_t* assembly_pointer = (uint8_t *) mp_obj_str_get_data(_assembly, &assembly_len);
-    printf("assembly_len: %d, assembly location: %p, first dword: %04X\n", assembly_len, aligned_assembly, *((uint32_t*)assembly_pointer));
+    printf(
+        "assembly_len: %d, assembly location: %p, first dword: %04X\n",
+         assembly_len, aligned_assembly, *((uint32_t*)assembly_pointer)
+    );
     fflush(stdout);
 
     memcpy(aligned_assembly, assembly_pointer, assembly_len);
