@@ -10,7 +10,7 @@ typedef int (*printf_ptr) (const char *str, ...);
 typedef void (*assembly_ptr) (const char *str, printf_ptr);
 typedef void (*simple_ptr) ();
 
-static IRAM_ATTR uint8_t assembly[4096] = {0};
+static IRAM_ATTR uint8_t assembly[4096] __attribute__((aligned (4)))  = {0};
 
 
 STATIC mp_obj_t rawexec_call_(mp_obj_t _text, mp_obj_t _assembly) {
@@ -22,24 +22,17 @@ STATIC mp_obj_t rawexec_call_(mp_obj_t _text, mp_obj_t _assembly) {
         mp_raise_msg(&mp_type_AttributeError, "Assembly should be a bytestring");
     }
 
-    // Workaround for issue where IRAM_ATTR uint8_t array is not saved 4-byte
-    // aligned in memory.
-    uint8_t* aligned_assembly = assembly;
-    while(aligned_assembly % 4 !== 0) {
-        aligned_assembly++;
-    }
-
     mp_uint_t assembly_len;
     uint8_t* assembly_pointer = (uint8_t *) mp_obj_str_get_data(_assembly, &assembly_len);
     printf(
         "assembly_len: %d, assembly location: %p, first dword: %04X\n",
-         assembly_len, aligned_assembly, *((uint32_t*)assembly_pointer)
+         assembly_len, assembly, *((uint32_t*)assembly_pointer)
     );
     fflush(stdout);
 
-    memcpy(aligned_assembly, assembly_pointer, assembly_len);
+    memcpy(assembly, assembly_pointer, assembly_len);
 
-    simple_ptr call_assembly = aligned_assembly;
+    simple_ptr call_assembly = assembly;
     call_assembly();
 
     return mp_const_none;
