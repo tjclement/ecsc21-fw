@@ -55,9 +55,7 @@ _message_ui = (
     "You can submit the flag by calling flags.submit_flag('CTF{xxxx}')."
 )
 
-_message_console = (
-    _message_ui
-)
+_message_console = _message_ui
 
 print(_message_console)
 easydraw.messageCentered("Awesome ASM\n\n\n" + _message_ui)
