@@ -6,11 +6,10 @@
 #include "py/mphal.h"
 #include "py/runtime.h"
 
-typedef int (*printf_ptr) (const char *str, ...);
-typedef void (*assembly_ptr) (const char *str, printf_ptr);
-typedef void (*simple_ptr) ();
+typedef int (*printf_ptr) (const char *, ...);
+typedef void (*assembly_ptr) (const char *, printf_ptr);
 
-static IRAM_ATTR uint8_t assembly[4096] __attribute__((aligned (4)))  = {0};
+static IRAM_ATTR uint8_t assembly[4096] __attribute__((aligned (4))) = {0};
 
 
 STATIC mp_obj_t rawexec_call_(mp_obj_t _text, mp_obj_t _assembly) {
@@ -28,12 +27,10 @@ STATIC mp_obj_t rawexec_call_(mp_obj_t _text, mp_obj_t _assembly) {
         "assembly_len: %d, assembly location: %p, first dword: %04X\n",
          assembly_len, assembly, *((uint32_t*)assembly_pointer)
     );
-    fflush(stdout);
-
     memcpy(assembly, assembly_pointer, assembly_len);
 
-    simple_ptr call_assembly = assembly;
-    call_assembly();
+    assembly_ptr call_assembly = assembly;
+    call_assembly(text, printf);
 
     return mp_const_none;
 }
