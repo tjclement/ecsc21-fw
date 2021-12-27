@@ -17,7 +17,8 @@ def get_flag(bytes):
 
 
 _message_ui = (
-    'Connect to the device via USB at baud 115200. You\'re now in a Python shell.\n\n'
+    'Connect to the device via USB at baud 115200. You\'re now in a Python shell.\n'
+    'You can paste snippets using CTRL+E and CTRL+D.\n\n'
     'Extract the flag from efuse by calling secure_read_efuse_block(<block>, <start_offset>, <length>)\n'
     'Use get_flag(<bytes>) to convert found data into a flag.\n\n'
     'You can submit the flag by calling flags.submit_flag("CTF{xxxx}").'
