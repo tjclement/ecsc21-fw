@@ -1,4 +1,4 @@
-import machine, sys, system, time
+import machine, sys, system, time, virtualtimers
 import _device as device
 
 rtc = machine.RTC()
@@ -18,6 +18,19 @@ del orientation, display
 
 __chk_recovery = False
 fc_level = machine.nvs_getint("system", 'factory_checked') or 0
+countdown_time = machine.nvs_getint("system", "countdown_time") or 28800  # By default start with 8 hours countdown
+
+
+def countdown_tick():
+    global countdown_time
+    countdown_time -= 1
+
+    # Protect nvs by persisting the timer only once each 10 seconds
+    if countdown_time % 10 == 0:
+        machine.nvs_setint("system", "countdown_time", countdown_time)
+
+    return 1000  # Run again in 1 sec
+
 
 # Application starting
 app = rtc.read_string()
@@ -48,6 +61,11 @@ if app and not app == "shell":
             # users can approach them via the python console
             for name in dir(module):
                 globals()[name] = getattr(module, name)
+
+            # Run update_countdown here so regardless of being in the menu or a challenge
+            # the timer continues
+            virtualtimers.begin(100)
+            virtualtimers.new(0, countdown_tick)
     except KeyboardInterrupt:
         system.launcher()
     except BaseException as e:

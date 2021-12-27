@@ -113,18 +113,13 @@ _menu_stack[-1].draw()
 display.flush()
 
 
-def update_countdown():
+def menu_countdown_tick():
     _menu.countdown_time -= 1
-
-    # Protect nvs by persisting the timer only once each 10 seconds
-    if _menu.countdown_time % 10 == 0:
-        machine.nvs_setint("system", "countdown_time", _menu.countdown_time)
-
     _menu_stack[-1].draw()
     display.flush()
 
     return 1000  # Run again in 1 sec
 
 
-virtualtimers.begin(100)
-virtualtimers.new(0, update_countdown)
+# virtualtimers.begin is already called in boot.py
+virtualtimers.new(0, menu_countdown_tick)
