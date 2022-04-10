@@ -34,6 +34,26 @@ class List:
         self.visible(True)
         self.enabled(True)
 
+    def draw_timer(self, x, y):
+        # print(x,y)
+        if self.countdown_time is not None:
+            countdown = time.strftime("%H:%M:%S", time.gmtime(self.countdown_time))
+            # For increased visual effect and a more uncomfortable feeling on each off second surround the countdown
+            if self.countdown_time % 2 == 0:
+                countdown = "- %s -" % countdown
+            lineHeight = display.getTextHeight(" ", "alarm_clock_regular16")
+            lineWidth = display.getTextWidth(countdown, "alarm_clock_regular16")
+            centerPosition = int((display.width() - display.getTextWidth(countdown, "alarm_clock_regular16")) / 2)
+            display.drawRect(x, y, display.width()-2, lineHeight, True, 0x000000)
+            display.drawText(
+                x + centerPosition,
+                y,
+                countdown,
+                0xFF0000,
+                "alarm_clock_regular16",
+                )
+            return x, y + lineHeight + 20
+
     def draw(self):
         if self._visible:
             display.drawRect(self.x, self.y, self.w, self.h, True, 0x000000)
@@ -53,23 +73,7 @@ class List:
                 cursor = (cursor[0], cursor[1] + 20)
 
             # Draw countdown timer
-            if self.countdown_time is not None:
-                countdown = time.strftime("%H:%M:%S", time.gmtime(self.countdown_time))
-                # For increased visual effect and a more uncomfortable feeling on each off second surround the countdown
-                if self.countdown_time % 2 == 0:
-                    countdown = "- %s -" % countdown
-                lineHeight = display.getTextHeight(" ", "alarm_clock_regular16")
-                lineWidth = display.getTextWidth(countdown, "alarm_clock_regular16")
-                centerPosition = int((display.width() - display.getTextWidth(countdown, "alarm_clock_regular16")) / 2)
-                display.drawText(
-                    cursor[0] + centerPosition,
-                    cursor[1],
-                    countdown,
-                    0xFF0000,
-                    "alarm_clock_regular16",
-                )
-                cursor = (cursor[0], cursor[1] + lineHeight)
-                cursor = (cursor[0], cursor[1] + 20)
+            cursor = self.draw_timer(cursor[0], cursor[1])
 
             totalHeight = 0
             for i in range(len(self.items) - self.offset):

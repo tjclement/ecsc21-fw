@@ -1,4 +1,4 @@
-import buttons, easydraw, display, machine, system, virtualtimers, flags
+import buttons, easydraw, display, machine, system, virtualtimers, flags, time
 from listbox import List
 
 # Logo LED
@@ -15,7 +15,7 @@ _menu = List(
     display.width(),
     display.height(),
     countdown_time=countdown_time,
-    header="WARNING: this device is being wiped remotely.",
+    header="WARNING: this will be wiped remotely if protection mechanisms are not disabled in:",
     logo="/private/system/logo_small.png",
 )
 
@@ -23,7 +23,7 @@ found_flags = flags.get_found_flags()
 
 _menu_items = {
     _menu: [
-        ("View found flags", None, None, lambda: system.start("showflags")),
+        # ("View found flags", None, None, lambda: system.start("showflags")),
         ("You shall not pass", "1a" in found_flags, 100, lambda: system.start("challenges.1a")),
         ("Insane in the membrain", "1b" in found_flags, 200, lambda: system.start("challenges.1b")),
         ("Got root?", "1c" in found_flags, 200, lambda: system.start("challenges.1c")),
@@ -114,9 +114,12 @@ display.flush()
 
 
 def menu_countdown_tick():
+    # start = time.time()
     _menu.countdown_time -= 1
-    _menu_stack[-1].draw()
+    _menu_stack[-1].draw_timer(1, 137)
     display.flush()
+    # end = time.time()
+    # print("took:", end-start)
 
     return 1000  # Run again in 1 sec
 
