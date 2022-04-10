@@ -1,20 +1,20 @@
 import uos, gc
 
 try:
-	uos.mkdir('/lib')
+    uos.mkdir("/lib")
 except:
-	pass
+    pass
 try:
-	uos.mkdir('/apps')
+    uos.mkdir("/apps")
 except:
-	pass
+    pass
 try:
-	uos.mkdir('/cache')
+    uos.mkdir("/cache")
 except:
-	pass
+    pass
 try:
-	uos.mkdir('/config')
+    uos.mkdir("/config")
 except:
-	pass
+    pass
 
 gc.collect()

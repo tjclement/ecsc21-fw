@@ -1,42 +1,28 @@
-import virtualtimers, time, flags, display, easydraw
+import machine, display, easydraw, flags, scratch
 
-virtualtimers.begin(500)
+def read_rtc_memory(address, length):
+    if length % 4 != 0:
+        raise ValueError("length must be a multiple of 4 bytes")
 
+    if not (0x3FF80000 <= address <= 0x3FF81FFF) and not (0x400C0000 <= address <= 0x400C1FFF):
+        raise ValueError("can only read from RTC_FAST memory, not normal RAM")
 
-def print_flag():
-    def actual_print():
-        try:
-            with open('/proc/uid', 'rt') as file:
-                uid = int(file.read())
-        except:
-            print('Debug: /proc/uid is corrupt: does not contain textual integer user ID.')
-            return -1
-        if uid != 0:
-            print('Only the root user is allowed to print the flag.')
-            return -1
-        else:
-            print('Congratulations, here\'s your flag: CTF{%s}' % '6c78629ca4bb5dc3f509e3a97744ce26e3adf1740edd4b5d')
-        return -1
+    if (0x3FF80000 <= address <= (0x3FF80000+53)):
+        raise ValueError("refusing to read from security-sensitive address range 0x3FF80000-0x3FF80035")
 
-    print('Debug: Verifying integrity of /proc/uid..')
-    time.sleep(1)
-    try:
-        with open('/proc/uid', 'rt') as file:
-            uid = int(file.read())
-    except:
-        print('Debug: /proc/uid is corrupt: does not contain textual integer user ID.')
-        return
+    if address >= 0x40080000:
+        print("Reading from IRAM")
 
-    if uid != 1000:
-        print('User ID has been tampered with! Exiting.')
-        return
-    else:
-        print('Debug: User ID integrity checks out. Yielding the processor to be sociable to other processes before printing flag..')
-        virtualtimers.new(500, actual_print)
+    return b''.join([int.to_bytes(machine.mem32[address+i], 4, "little") for i in range(0, length, 4)])
 
-
-_message_ui = 'Use print_flag() to obtain the flag. You can paste snippets using CTRL+E and CTRL+D.\n\n' + \
+_message_ui = 'The flag resides in RTC_FAST memory at address 0x3FF80000.\n\n' + \
+              'Use read_rtc_memory(address, length) to access raw data in RTC RAM and find the flag.\n\n' + \
+              'You can paste snippets using CTRL+E and CTRL+D.\n\n' + \
               'You can submit the flag by calling flags.submit_flag("CTF{xxxx}").'
 
+_message_console = _message_ui
+
 display.drawFill(0x0)
-easydraw.messageCentered('Timing is Key\n\n\n' + _message_ui)
+easydraw.messageCentered('RTFM\n\n\n' + _message_ui + '\n' * 8)
+
+print(_message_console)

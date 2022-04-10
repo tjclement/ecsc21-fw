@@ -1,10 +1,12 @@
 import ugfx, woezel, easywifi, easydraw, system, time, os
 
+
 def stop():
     time.sleep(2)
     system.launcher()
 
-easydraw.msg("Welcome!","Updating apps...",True)
+
+easydraw.msg("Welcome!", "Updating apps...", True)
 
 
 if not easywifi.status():
@@ -12,13 +14,13 @@ if not easywifi.status():
         stop()
 
 try:
-    apps = os.listdir('lib')
+    apps = os.listdir("lib")
 except OSError:
     easydraw.msg("There are no apps installed.")
     stop()
 
 for app in apps:
-    easydraw.msg("Updating '"+app+"'...")
+    easydraw.msg("Updating '" + app + "'...")
     try:
         woezel.install(app)
         easydraw.msg("Done!")

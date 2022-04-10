@@ -1,11 +1,58 @@
-import upysh, flags, easydraw
+import flags, easydraw, efuse, binascii
 
-for name in dir(upysh):
-    globals()[name] = getattr(upysh, name)
 
-_message = 'Connect to the device via USB at baud 115200. You\'re now in a Python shell with "upysh" commandline-like functions.\n' + \
-      'Type "man" to see what you can do, and hunt for a file called flag.txt.\n\n' + \
-      'You can submit the flag by calling flags.submit_flag("CTF{xxxx}").'
+def secure_read_efuse_block(block, start_offset, length):
+    if block == efuse.EFUSE_BLK2 and length > 0:
+        print("No access allowed to secure efuse region!")
+    else:
+        length = length if length > 0 else 256
+        print(efuse.read_block(block, start_offset, length))
 
-print(_message)
-easydraw.messageCentered('Scriptkiddie\n\n\n' + _message)
+
+def get_flag(bytes):
+    """
+    *** SOLUTION ***
+
+    1.  Use the logic flaw in `secure_read_efuse_block()` to bypass the 'security'
+        by providing the right block and offset with a length of 0:
+
+    >>> secure_read_efuse_block(efuse.EFUSE_BLK2, 0, 0)
+    b'P\xd1\xf7\xf8\xcb]\xe7e\xcc\x0e\x91\n\x90\x8b\xa4\x82*\x08^\xf8I\x1d\x1f\xee\x00\x00\x00\x00\x00\x00\x00\x00'
+    >>> get_flag(b'P\xd1\xf7\xf8\xcb]\xe7e\xcc\x0e\x91\n\x90\x8b\xa4\x82*\x08^\xf8I\x1d\x1f\xee')
+    CTF{50d1f7f8cb5de765cc0e910a908ba4822a085ef8491d1fee}
+
+    2.  Find out that the underlying call to `efuse.read_block()` can be used directly:
+
+    >>> efuse.read_block(efuse.EFUSE_BLK2, 0, 256)
+    b'P\xd1\xf7\xf8\xcb]\xe7e\xcc\x0e\x91\n\x90\x8b\xa4\x82*\x08^\xf8I\x1d\x1f\xee\x00\x00\x00\x00\x00\x00\x00\x00'
+    >>> get_flag(b'P\xd1\xf7\xf8\xcb]\xe7e\xcc\x0e\x91\n\x90\x8b\xa4\x82*\x08^\xf8I\x1d\x1f\xee')
+    CTF{50d1f7f8cb5de765cc0e910a908ba4822a085ef8491d1fee}
+    """
+    if len(bytes) != 24:
+        print("That's not valid flag data, a flag consists of 24 bytes.")
+    else:
+        print("CTF{%s}" % str(binascii.hexlify(bytes), "ascii"))
+
+
+_message_ui = (
+    "Connect to the device via USB at baud 115200. You're now in a Python shell.\n"
+    "You can paste snippets using CTRL+E and CTRL+D.\n\n"
+    "Extract the flag from efuse by calling secure_read_efuse_block(<block>, <start_offset>, <length>)\n"
+    "Use get_flag(<bytes>) to convert found data into a flag.\n\n"
+    'You can submit the flag by calling flags.submit_flag("CTF{xxxx}").'
+)
+
+_message_console = (
+    _message_ui + "\n\n"
+    "To show off our 1337 skills we have included part of the implementation here:\n"
+    """
+    def secure_read_efuse_block(block, start_offset, length):
+        if block == efuse.EFUSE_BLK2 and length > 0:
+            print('No access allowed to secure efuse region!')
+        else:
+            length = length if length > 0 else 256
+    """
+)
+
+print(_message_console)
+easydraw.messageCentered("You shall not pass\n\n\n" + _message_ui)

@@ -4,25 +4,26 @@ challnames = []
 items = []
 points = []
 
+
 def run():
     _challs = {
-        '1a': {'name': 'Script Kiddie', 'points': 100},
+        "1a": {"name": "Script Kiddie", "points": 100},
         '1b': {'name': 'Insane in the Membrain', 'points': 100},
-        '1c': {'name': 'Security through Obscurity', 'points': 100},
-        '1d': {'name': 'Timing is Key', 'points': 200},
-        '1e': {'name': 'Sailing in Side Channels', 'points': 200},
-        '1f': {'name': 'One Time Pwn', 'points': 200},
-        '2a': {'name': 'Zagan\'s IP', 'points': 100},
-        '2b': {'name': 'Zagan\'s Bitcoin Wallet', 'points': 200},
-        '2c': {'name': 'Zagan\'s Address', 'points': 500},
+        "1c": {"name": "Security through Obscurity", "points": 100},
+        "1d": {"name": "Timing is Key", "points": 200},
+        "1e": {"name": "Sailing in Side Channels", "points": 200},
+        "1f": {"name": "One Time Pwn", "points": 200},
+        "2a": {"name": "Zagan's IP", "points": 100},
+        "2b": {"name": "Zagan's Bitcoin Wallet", "points": 200},
+        "2c": {"name": "Zagan's Address", "points": 500},
     }
 
-    found_flags = valuestore.load(keyname='flags')
+    found_flags = valuestore.load(keyname="flags")
     for key in _challs.keys():
         if key not in found_flags:
             challnames.append(key)
-            items.append(_challs[key]['name'])
-            points.append(_challs[key]['points'])
+            items.append(_challs[key]["name"])
+            points.append(_challs[key]["points"])
 
     list = listbox.List(0, 0, 240, 320)
     for item in items:
@@ -58,5 +59,6 @@ def run():
 
     list.draw()
     display.flush()
+
 
 run()
