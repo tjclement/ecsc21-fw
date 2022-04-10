@@ -6,7 +6,7 @@ def run():
 
     _challnames = {
         "1a": "You shall not pass",
-        "1b": "Insane in the membrain",
+        "1b": "Insane in the Membrain",
         "1c": "Got root?",
         "1d": "RTFM",
         "1e": "Wear and tear",
