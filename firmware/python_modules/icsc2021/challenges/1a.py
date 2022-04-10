@@ -6,7 +6,7 @@ def secure_read_efuse_block(block, start_offset, length):
         print("No access allowed to secure efuse region!")
     else:
         length = length if length > 0 else 256
-        print(efuse.read_block(block, start_offset, length))
+        return efuse.read_block(block, start_offset, length)
 
 
 def get_flag(bytes):
