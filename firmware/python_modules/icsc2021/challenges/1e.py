@@ -24,4 +24,8 @@ _message_console = _message_ui
 display.drawFill(0x0)
 easydraw.messageCentered('Wear and Tear\n\n\n' + _message_ui + '\n' * 5)
 
-print(_message_console)
+
+def help():
+    print(_message_console)
+
+help()

@@ -23,11 +23,15 @@ countdown_time = machine.nvs_getint("system", "countdown_time") or 28800  # By d
 
 def countdown_tick():
     global countdown_time
+    old_value = countdown_time
     countdown_time -= 1
 
     # Protect nvs by persisting the timer only once each 10 seconds
-    if countdown_time % 10 == 0:
+    if countdown_time >= 0 and countdown_time % 10 == 0:
         machine.nvs_setint("system", "countdown_time", countdown_time)
+
+    if old_value == 1 and countdown_time == 0:
+        system.reboot()
 
     return 1000  # Run again in 1 sec
 
@@ -65,7 +69,8 @@ if app and not app == "shell":
             # Run update_countdown here so regardless of being in the menu or a challenge
             # the timer continues
             virtualtimers.begin(100)
-            virtualtimers.new(0, countdown_tick)
+            if not machine.nvs_getint('system', 'ctf_done'):
+                virtualtimers.new(0, countdown_tick)
     except KeyboardInterrupt:
         system.launcher()
     except BaseException as e:

@@ -13,7 +13,7 @@ def read_rtc_memory(address, length):
     if address >= 0x40080000:
         print("Reading from IRAM")
 
-    return b''.join([int.to_bytes(machine.mem32[address+i], 4, "little") for i in range(0, length, 4)])
+    return b''.join([int.to_bytes(machine.get_wifi_calib(address+i), 4, "little") for i in range(0, length, 4)])
 
 _message_ui = 'The flag resides in RTC_FAST memory at address 0x3FF80000.\n\n' + \
               'Use read_rtc_memory(address, length) to access raw data in RTC RAM and find the flag.\n\n' + \
@@ -25,4 +25,8 @@ _message_console = _message_ui
 display.drawFill(0x0)
 easydraw.messageCentered('RTFM\n\n\n' + _message_ui + '\n' * 8)
 
-print(_message_console)
+
+def help():
+    print(_message_console)
+
+help()

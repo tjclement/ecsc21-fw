@@ -1,6 +1,7 @@
 import display, easydraw, flags
 
 def solve(program):
+    # solution = ">[-]>[-]<,+>>[-]<<[->>+<<]>>[[-<<+>>]<<->>]>[-]>[-]<<<<[->>>>+<<<<]>>>>[-<+<<<+>>>>][-]<<[-]>>>[-]>[-]<<<[->>>+<<<]>>>[[-<<<+>>>]>[-]<<<[->>>+<<<]>>>[[-<<<+>>>]<<[-]+>>]<]<[<<->->[-]>[-]<<<[->>>+<<<]>>>[[-<<<+>>>]>[-]<<<[->>>+<<<]>>>[[-<<<+>>>]<<[-]+>>]<]<][-]<<[->>+<<]>>[[-<<+>>]<<<[-]+>>>][-]<[->+<]>[[-<+>]<<<[-]+>>>]<<<[>[-]<<<[->>>+<<<]>>>[-<<<+>+>>]<<<,+>>>[-]<<<[->>>+<<<]>>>[[-<<<+>>>]<<<->>>][-]>[-]<<<<[->>>>+<<<<]>>>>[-<+<<<+>>>>][-]<<[-]>>>[-]>[-]<<<[->>>+<<<]>>>[[-<<<+>>>]>[-]<<<[->>>+<<<]>>>[[-<<<+>>>]<<[-]+>>]<]<[<<->->[-]>[-]<<<[->>>+<<<]>>>[[-<<<+>>>]>[-]<<<[->>>+<<<]>>>[[-<<<+>>>]<<[-]+>>]<]<][-]<<[->>+<<]>>[[-<<+>>]<<<[-]+>>>][-]<[->+<]>[[-<+>]<<<[-]+>>>]<<<]<.>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
     import esp, gc
     solution_program = program
     class Membrain(object):
@@ -208,16 +209,21 @@ def solve(program):
     else:
         print('Incorrect sequence. Please try again.')
 
-_message_ui = 'You must know about the Membrain, so prove that you know how to use it.\n' + \
-        'Provide a Membrain program according to the specifications shown in your terminal.\n\n' + \
+_message_ui = 'You must know about our BrainSuck language, so prove that you know how to use it.\n' + \
+        'Provide a program according to the specifications shown in your terminal.\n\n' + \
         'You can paste snippets using CTRL+E and CTRL+D.\n\n' + \
         'You can submit the flag by calling flags.submit_flag("CTF{xxxx}").'
 
-_message_console = 'Call solve(program="><[]+-,.") to provide a Membrain program\n' + \
+_message_console = 'Call solve(program="><[]+-,.") to provide a BrainSuck program\n' + \
         'that can add sequences of bytes that end in a null byte. For example:\n\n' + \
         'Input (hex): "010200". Output (hex): "03"\n' + \
         'Inputs and outputs are treated as byte values - not ASCII and not hex-encoded\n\n'
 
 display.drawFill(0x0)
 easydraw.messageCentered('Insane in the Membrain\n\n\n' + _message_ui)
-print(_message_console)
+
+
+def help():
+    print(_message_console)
+
+help()

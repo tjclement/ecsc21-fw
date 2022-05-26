@@ -257,7 +257,10 @@ class Assembler:
                     # assembler directive
                     func = getattr(self, 'd_' + opcode[1:])
                     if func is not None:
-                        result = func(*args)
+                        try:
+                            result = func(*args)
+                        except TypeError as e:
+                            raise ValueError('Error with line: %s, %s, %s -> %s' % (label, opcode, str(args), str(e)))
                         if result is not None:
                             self.append_section(result)
                         continue

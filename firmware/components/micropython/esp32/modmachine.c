@@ -70,6 +70,8 @@
 #include "uart.h"
 #include "modnetwork.h"
 
+#include "nvs_init.h"
+
 #if MICROPY_PY_MACHINE
 
 //extern uint8_t temprature_sens_read();
@@ -1099,14 +1101,55 @@ STATIC mp_obj_t mod_machine_set_heap_size (mp_obj_t _value)
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_machine_set_heap_size_obj, mod_machine_set_heap_size);
 
+//-----------------------------------------------------------
+STATIC mp_obj_t mod_machine_set_wifi_calib (mp_obj_t _addr, mp_obj_t _value)
+{
+    int32_t *addr = (int32_t*) mp_obj_get_int(_addr);
+
+    if(addr != NULL){
+        int32_t value = mp_obj_get_int(_value);
+        *addr = value;
+    }
+
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_machine_set_wifi_calib_obj, mod_machine_set_wifi_calib);
+
+//-----------------------------------------------------------
+STATIC mp_obj_t mod_machine_get_wifi_calib (mp_obj_t _addr)
+{
+    int32_t *addr = (int32_t*) mp_obj_get_int(_addr);
+
+    if(addr != NULL){
+        return mp_obj_new_int(*addr);
+    }
+
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_machine_get_wifi_calib_obj, mod_machine_get_wifi_calib);
+
+//-----------------------------------------------------------
+STATIC mp_obj_t mod_machine_format_nvs ()
+{
+    nvs_format();
+
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_machine_format_nvs_obj, mod_machine_format_nvs);
+
 
 //===============================================================
 STATIC const mp_rom_map_elem_t machine_module_globals_table[] = {
         { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_umachine) },
 
-        { MP_ROM_QSTR(MP_QSTR_mem8),					MP_ROM_PTR(&machine_mem8_obj) },
-        { MP_ROM_QSTR(MP_QSTR_mem16),					MP_ROM_PTR(&machine_mem16_obj) },
-        { MP_ROM_QSTR(MP_QSTR_mem32),					MP_ROM_PTR(&machine_mem32_obj) },
+        // { MP_ROM_QSTR(MP_QSTR_mem8),					MP_ROM_PTR(&machine_mem8_obj) },
+        // { MP_ROM_QSTR(MP_QSTR_mem16),					MP_ROM_PTR(&machine_mem16_obj) },
+        // { MP_ROM_QSTR(MP_QSTR_mem32),					MP_ROM_PTR(&machine_mem32_obj) },
+
+        { MP_ROM_QSTR(MP_QSTR_get_wifi_calib),			MP_ROM_PTR(&mod_machine_get_wifi_calib_obj) },
+        { MP_ROM_QSTR(MP_QSTR_set_wifi_calib),			MP_ROM_PTR(&mod_machine_set_wifi_calib_obj) },
+
+        { MP_ROM_QSTR(MP_QSTR_format_nvs),			    MP_ROM_PTR(&mod_machine_format_nvs_obj) },
 
         { MP_ROM_QSTR(MP_QSTR_freq),					MP_ROM_PTR(&machine_freq_obj) },
         { MP_ROM_QSTR(MP_QSTR_reset),					MP_ROM_PTR(&machine_reset_obj) },

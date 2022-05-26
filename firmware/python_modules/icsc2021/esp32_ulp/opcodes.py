@@ -359,7 +359,7 @@ def get_cond(arg):
 def _soc_reg_to_ulp_periph_sel(reg):
     # Map SoC peripheral register to periph_sel field of RD_REG and WR_REG instructions.
     if reg < DR_REG_RTCCNTL_BASE:
-        raise ValueError("invalid register base")
+        raise ValueError("invalid register base: %s" % str(reg))
     elif reg < DR_REG_RTCIO_BASE:
         ret = RD_REG_PERIPH_RTC_CNTL
     elif reg < DR_REG_SENS_BASE:
@@ -369,7 +369,7 @@ def _soc_reg_to_ulp_periph_sel(reg):
     elif reg < DR_REG_IO_MUX_BASE:
         ret = RD_REG_PERIPH_RTC_I2C
     else:
-        raise ValueError("invalid register base")
+        raise ValueError("invalid register base: %s" % str(reg))
     return ret
 
 

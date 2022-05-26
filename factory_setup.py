@@ -12,6 +12,11 @@ try:
 except:
     pass
 
+try:
+    rm('/private/system/flag.txt')
+except:
+    pass
+
 for dir in ['/private', '/private/system', '/proc']:
     try:
         mkdir(dir)
@@ -26,23 +31,6 @@ machine.nvs_setint('system', 'jobs_seen', 0)
 machine.nvs_setint('system', 'message_seen', 0)
 machine.nvs_setint('system', 'ctf_done', 0)
 
-# Prepare Challenge 1a
-with open('/private/system/flag.txt', 'wt') as file:
-    file.write('CTF{2fe091d3ed054801e17efe4931f70db5c55ec81a865a9fb8}')
-
-# Prepare Challenge 1c
-flash._write(0x00310050, b'Use up/down to navigate')
-flash._write(0x00310330, os.urandom(48))
-flash._write(0x0031046F, os.urandom(58))
-flash._write(0x00310612, os.urandom(96))
-flash._write(0x00310984, b'flag')
-# b'CTF{372c1bc28b24500c009da43d3cd1b40bb93c238b27cb75e9}'
-flash._write(0x003109AC, b'Q1RGezM3MmMxYmMyOGIyNDUwMGMwMDlkYTQzZDNjZDFiNDBiYjkzYzIzOGIyN2NiNzVlOX0=')
-flash._write(0x00310A38, os.urandom(256))
-
-# Prepare Challenge 1d
-with open('/proc/uid', 'wt') as file:
-    file.write('1000')
 
 # Write logo images
 with open('/private/system/logo_small.png', 'wb') as file:
@@ -56,62 +44,7 @@ with open('/private/system/locked_icon.png', 'wb') as file:
 with open('/private/system/unlocked_icon.png', 'wb') as file:
     file.write(b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x0e\x00\x00\x00\x0e\x08\x06\x00\x00\x00\x1fH-\xd1\x00\x00\x00\x04gAMA\x00\x00\xb1\x8f\x0b\xfca\x05\x00\x00\x00 cHRM\x00\x00z&\x00\x00\x80\x84\x00\x00\xfa\x00\x00\x00\x80\xe8\x00\x00u0\x00\x00\xea`\x00\x00:\x98\x00\x00\x17p\x9c\xbaQ<\x00\x00\x00xeXIfMM\x00*\x00\x00\x00\x08\x00\x05\x01\x12\x00\x03\x00\x00\x00\x01\x00\x01\x00\x00\x01\x1a\x00\x05\x00\x00\x00\x01\x00\x00\x00J\x01\x1b\x00\x05\x00\x00\x00\x01\x00\x00\x00R\x01(\x00\x03\x00\x00\x00\x01\x00\x02\x00\x00\x87i\x00\x04\x00\x00\x00\x01\x00\x00\x00Z\x00\x00\x00\x00\x00\x00\x00H\x00\x00\x00\x01\x00\x00\x00H\x00\x00\x00\x01\x00\x02\xa0\x02\x00\x04\x00\x00\x00\x01\x00\x00\x00\x0e\xa0\x03\x00\x04\x00\x00\x00\x01\x00\x00\x00\x0e\x00\x00\x00\x00\x01\x02\xdcK\x00\x00\x00\tpHYs\x00\x00\x0b\x13\x00\x00\x0b\x13\x01\x00\x9a\x9c\x18\x00\x00\x028iTXtXML:com.adobe.xmp\x00\x00\x00\x00\x00<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 6.0.0">\n   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">\n      <rdf:Description rdf:about=""\n            xmlns:exif="http://ns.adobe.com/exif/1.0/"\n            xmlns:tiff="http://ns.adobe.com/tiff/1.0/">\n         <exif:PixelYDimension>14</exif:PixelYDimension>\n         <exif:PixelXDimension>14</exif:PixelXDimension>\n         <tiff:Orientation>1</tiff:Orientation>\n         <tiff:ResolutionUnit>2</tiff:ResolutionUnit>\n      </rdf:Description>\n   </rdf:RDF>\n</x:xmpmeta>\n\xaf\xe3Q\xe2\x00\x00\x02\x03IDAT(\x15\x85\x92\xbfk\x14A\x14\xc7\xdf\x9b7\xfb\xe3\xee\x12\x17\xcf\x80\x8a\xa0\x01\x11\x11\x114X\x08\xe7\x8fJ\x0e\xd3\\q"i\xb5\xb0\xb6\xb5\x0bi\x15\xc1?@\xae\xb0\x13\x84\x13\x0bccr\x01\xb5W,-\xec\xe44\x81\xb8{{\xfbk\xe6\xf9f\xcfhw>v\x99\xd9\x99\xef\xe7\xbd\xef\xbcY\x84\xff\xc4\x8b\xcd\xcd\xb6N\xd3\r\x91\xdd\x90wDD\x0f{\xbd^\xac\xe6q[\x83A(\xd0\x08\x80\xd7\x98\xf9\xa5h\xd7\xac\xb5\xf2\r0\x17\xdc?|\xe8\x9eh\x8e\x85\xa19\xd7\xef\xf7\xd7[\xad\xd6)\xf9\xbe4\x1c\x0eo\xcf\x07\xcb\xc6\x91\x8c\xbd/\xab\xabw~\xb8*\xddnw\xc2l\xbfK\xd5e\xed\x16\xb2\xed\xceM <\xc3\x96s@Vy\x19\xe9\xc8{3\xfe\x9a}\xbc\x9c\x9a\xc5\x93\xe9N\xf7A\xc3\x7f\xfb\x0e\xaf\xc0\'\x00|\x82Xm\xe1t\xbbs-\\\xa0\x1d\xf0\x10\xc0J\x16\x94\x91*\x19%\xe7$\x06S$L\xed\xe3\x98\xefVq@\xf6\x02v>|s\xc54*8\x0f\x81\x82|\xafL\x00!$eyZxrx\xc3a\xd0\xa0\xc2.\xa0\xda-\xf3\xa0I\x8bY\x8a\xcb\xc2\xd4\xa0R\x88)\x94\x0c\x0c\xe0k2z\xefWSo\x0c\xce\xeag\xafO{\xc9\x94\xc8\xd79XF\xbf\xca,H\xd2\\\xc0:\x94\x01Kr\xbe\xda")\x864\xf7\xf0\xf1\xf3&\x8e>7\xb0(5(e\x81\x19Qk\x84\xca\xd8\xbf\xcd\xac\x9b#\xf7T?n\xfdh;\xe1\xf5\xfb\x13<\xb1T\xc2R\x14CY\xd5\xb0\x08\x94d\xff\x17J\x18Y\xac\xb9zC\xec\xe0\xcf}\x82d\xaa\xa4?\xe2\xc7\xban\xc9\xe9%<\xc6Z\xeb\xe6\x1a\x18\t*v\x7fBaf"\xbe{k\x0c\x81/\x90T\x13\xc4\xc9\xd9Z\x0e*\xad\xc8A.\xb4\x00\tD\x1e\x04\xb6l\x01\xcd\xd6WV\xc6bA\x8a\x98\x10B#E\xdcU\xc9`\xe3<\x9da\x7f,d\xa3\xabO%\xedE\xd9NE@\x07~\x9c?1*=\x87H\xa6\xaf\xc2\xeb\xef\x1f\x1d\x80\xbf\x01\x04*\xd2@d;!\xdf\x00\x00\x00\x00IEND\xaeB`\x82')
 
-keys_pressed = [False] * 4
-ir_received = [False] * 8
-
-
-def update():
-    names = ['Up', 'Down', 'Left', 'Right']
-    for i,name in enumerate(names):
-        if not keys_pressed[i]:
-            display.drawFill(0x00)
-            messageCentered('Press ' + name)
-            display.flush()
-            return
-
-    if False in ir_received:
-        formatted = ' '.join([str(i) if ir_received[i] else ' ' for i in range(len(ir_received))])
-        display.drawFill(0x00)
-        no_true = 0
-        for state in ir_received:
-            if state:
-                no_true += 1
-        messageCentered(('IR Test\r\n\r\n\r\nReceived so far (%.2f%%): ' % (no_true / len(ir_received))) + formatted)
-        display.flush()
-        return
-
-    display.drawFill(0x00)
-    messageCentered('Done!\r\n\r\n\r\nYou can power off the badge now.')
-    display.flush()
-    machine.nvs_setint('system', 'factory_checked', 4)
-
-
-def handle_press(key_index, pressed):
-    global keys_pressed
-    if not pressed:
-        return
-    keys_pressed[key_index] = True
-    update()
-
-
-def ir_receive(key_index, offset, char1, char2):
-    global ir_received
-    print('Got IR:', key_index, offset, char1, char2)
-    offset //= 2
-    if 0 <= offset < len(ir_received):
-        ir_received[offset] = True
-    update()
-
-
-buttons.pushMapping({
-    buttons.BTN_UP: lambda pressed: handle_press(buttons.BTN_UP, pressed),
-    buttons.BTN_DOWN: lambda pressed: handle_press(buttons.BTN_DOWN, pressed),
-    buttons.BTN_LEFT: lambda pressed: handle_press(buttons.BTN_LEFT, pressed),
-    buttons.BTN_RIGHT: lambda pressed: handle_press(buttons.BTN_RIGHT, pressed),
-})
-
-infra = CustomIR(badge='ecsc2021', freq=40000)
-infra.command = ir_receive
-infra.rx_enable()
-
-update()
+display.drawFill(0x00)
+messageCentered('Done!\r\n\r\n\r\nYou can power off the badge now.')
+display.flush()
+machine.nvs_setint('system', 'factory_checked', 4)

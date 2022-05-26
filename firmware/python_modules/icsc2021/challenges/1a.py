@@ -39,7 +39,8 @@ _message_ui = (
     "You can paste snippets using CTRL+E and CTRL+D.\n\n"
     "Extract the flag from efuse by calling secure_read_efuse_block(<block>, <start_offset>, <length>)\n"
     "Use get_flag(<bytes>) to convert found data into a flag.\n\n"
-    'You can submit the flag by calling flags.submit_flag("CTF{xxxx}").'
+    "You can submit the flag by calling flags.submit_flag(\"CTF{xxxx}\").\n\n"
+    "Run help() to repeat challenge info."
 )
 
 _message_console = (
@@ -54,5 +55,8 @@ _message_console = (
     """
 )
 
-print(_message_console)
+def help():
+    print(_message_console)
+
+help()
 easydraw.messageCentered("You shall not pass\n\n\n" + _message_ui)

@@ -7,7 +7,24 @@ display.orientation(270)
 
 _showing_details = False
 
-countdown_time = machine.nvs_getint("system", "countdown_time") or 28800  # By default start with 8 hours countdown
+countdown_time = machine.nvs_getint("system", "countdown_time")
+if countdown_time is None:
+    countdown_time = 28800 # By default start with 8 hours countdown
+elif countdown_time < 0:
+    countdown_time = 0
+
+
+found_flags = flags.get_found_flags()
+all_done = all([chall in found_flags for chall in ["1a", "1b", "1c", "1d", "1e", "1f", "1g"]])
+time_up = countdown_time == 0
+
+def get_header():
+    if all_done:
+        return "NOTICE: initiation of remotely wiping this device has been disabled by manual override"
+    elif time_up:
+        return "ERROR: device contents have been wiped"
+    else:
+        return "WARNING: this device will be wiped remotely if protection mechanisms\nare not disabled in:"
 
 _menu = List(
     0,
@@ -15,11 +32,9 @@ _menu = List(
     display.width(),
     display.height(),
     countdown_time=countdown_time,
-    header="WARNING: this will be wiped remotely if protection mechanisms are not disabled in:",
+    header=get_header(),
     logo="/private/system/logo_small.png",
 )
-
-found_flags = flags.get_found_flags()
 
 _menu_items = {
     _menu: [
@@ -31,6 +46,9 @@ _menu_items = {
         ("Wear and tear", "1e" in found_flags, 300, lambda: system.start("challenges.1e")),
         ("Awesome ASM", "1f" in found_flags, 300, lambda: system.start("challenges.1f")),
         ("Eccentric exfiltration", "1g" in found_flags, 700, lambda: system.start("challenges.1g")),
+    ] if not time_up else [
+        ("No operable apps left on device", False, 0, lambda: system.reboot()),
+        # ("[Debug] Reset countdown", False, 0, lambda: machine.nvs_setint("system", "countdown_time", 28800) or system.reboot()),
     ],
 }
 
@@ -114,15 +132,20 @@ display.flush()
 
 
 def menu_countdown_tick():
-    # start = time.time()
-    _menu.countdown_time -= 1
-    _menu_stack[-1].draw_timer(1, 137)
-    display.flush()
-    # end = time.time()
-    # print("took:", end-start)
+    global time_up
+    if _menu.countdown_time > 0:
+        _menu.countdown_time -= 1
+        _menu_stack[-1].draw_timer(1, 137)
+        display.flush()
+    elif _menu.countdown_time == 0:
+        time_up = True
+        _menu.header = get_header()
+        _menu_stack[-1].draw()
+        display.flush()
 
     return 1000  # Run again in 1 sec
 
 
 # virtualtimers.begin is already called in boot.py
-virtualtimers.new(0, menu_countdown_tick)
+if not all_done:
+    virtualtimers.new(0, menu_countdown_tick)
